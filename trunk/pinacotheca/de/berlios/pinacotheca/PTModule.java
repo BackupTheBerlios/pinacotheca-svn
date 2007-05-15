@@ -8,11 +8,6 @@ public interface PTModule {
 
 		
 		/**
-		 */
-		public abstract void setRequest(HTTPRequest request);
-
-			
-			/**
 			 */
 			public abstract HTTPResponse getResponse();
 			
