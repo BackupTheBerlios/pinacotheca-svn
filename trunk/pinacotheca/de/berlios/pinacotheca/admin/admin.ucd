@@ -1,9 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<editmodel:ClassDiagramEditModel xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:editmodel="editmodel.xmi" xmlns:options="options.xmi" name="admin" size="1107,660" id="de.berlios.pinacotheca.admin" metadata="uml2-1.0" initialized="true" tag="1000" key="32303037303431392D313030302070696E61636F74686563612F73617376">
-  <children xsi:type="editmodel:ClassEditModel" name="AdminModule" location="45,30" size="197,67" id="de.berlios.pinacotheca.admin/AdminModule" runTimeClassModel="getResponse()">
-    <children xsi:type="editmodel:CompartmentEditModel"/>
-    <children xsi:type="editmodel:CompartmentEditModel" size="174,36">
+<editmodel:ClassDiagramEditModel xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:editmodel="editmodel.xmi" xmlns:options="options.xmi" name="admin" size="1362,814" id="de.berlios.pinacotheca.admin" metadata="uml2-1.0" initialized="true" tag="1000" key="32303037303431392D313030302070696E61636F74686563612F73617376">
+  <children xsi:type="editmodel:ClassEditModel" name="AdminModule" location="30,30" size="376,121" id="de.berlios.pinacotheca.admin/AdminModule" runTimeClassModel="request,AdminModule(Lde.berlios.pinacotheca.PTConfiguration;Lde.berlios.pinacotheca.http.HTTPRequest;),getResponse(),handleRequest()">
+    <children xsi:type="editmodel:CompartmentEditModel" size="127,18">
+      <children xsi:type="editmodel:AttributeEditModel" name="request" id="de.berlios.pinacotheca.admin/AdminModule#request"/>
+    </children>
+    <children xsi:type="editmodel:CompartmentEditModel" size="353,54">
       <children xsi:type="editmodel:MethodEditModel" name="getResponse" id="de.berlios.pinacotheca.admin/AdminModule#getResponse()"/>
+      <children xsi:type="editmodel:MethodEditModel" name="AdminModule" id="de.berlios.pinacotheca.admin/AdminModule#AdminModule(Lde.berlios.pinacotheca.PTConfiguration;Lde.berlios.pinacotheca.http.HTTPRequest;)"/>
+      <children xsi:type="editmodel:MethodEditModel" name="handleRequest" location="5,52" id="de.berlios.pinacotheca.admin/AdminModule#handleRequest()"/>
     </children>
     <children xsi:type="editmodel:CompartmentEditModel"/>
     <classifierPreferences xsi:type="editmodel:UMLClassDiagramClassifierPreference" showStereotype="true" showMethodsParameterTypes="true" showMethodsReturnType="true" showMethodsParameterNames="true" attributeSorter="Natural" methodSorter="Natural" innerClassSorter="Natural" showPrivateAttributes="true" showProtectedAttributes="true" showPublicAttributes="true" showPackageAttributes="true" showStaticAttributes="true" showProtectedMethods="true" showPublicMethods="true" showPackageMethods="true" showPrivateMethods="true" showStaticMethods="true" showProtectedInnerClasses="true" showPublicInnerClasses="true" showPackageInnerClasses="true" showPrivateInnerClasses="true" showStaticInnerClasses="true" showAttributeProperty="true" showAssociationMember="true"/>

@@ -1,19 +1,19 @@
 package de.berlios.pinacotheca.http;
 
-import java.net.Socket;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
+import java.net.Socket;
 
-public class HTTPClientReader implements Runnable {
+public class HTTPClientHandler implements Runnable {
 	/** 
 	 * @uml.property name="clientSocket"
 	 */
 	private Socket clientSocket;
 	
-	/**
-	 */
-	public HTTPClientReader(Socket clientSocket) {
-	}
+		
+		
+		public HTTPClientHandler(boolean isSecure, Socket clientSocket){
+		}
 
 	public void run() {
 	}
@@ -34,5 +34,9 @@ public class HTTPClientReader implements Runnable {
 		 * @uml.property  name="outputStream"
 		 */
 		private DataOutputStream outputStream;
+		/** 
+		 * @uml.property name="isSecure"
+		 */
+		private boolean isSecure;
 
 }

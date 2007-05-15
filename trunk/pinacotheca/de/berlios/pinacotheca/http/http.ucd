@@ -1,15 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<editmodel:ClassDiagramEditModel xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:editmodel="editmodel.xmi" xmlns:options="options.xmi" name="http" size="1656,642" id="de.berlios.pinacotheca.http" metadata="uml2-1.0" initialized="true" scrolledX="534" tag="1000" key="32303037303431392D313030302070696E61636F74686563612F73617376">
-  <children xsi:type="editmodel:ClassEditModel" name="HTTPClientReader" location="691,437" size="236,157" id="de.berlios.pinacotheca.http/HTTPClientReader" runTimeClassModel="inputStream,outputStream,run(),HTTPClientReader(Ljava.net.Socket;),readLine(),clientSocket">
-    <children xsi:type="editmodel:CompartmentEditModel" size="177,54">
-      <children xsi:type="editmodel:AttributeEditModel" name="clientSocket" id="de.berlios.pinacotheca.http/HTTPClientReader#clientSocket"/>
-      <children xsi:type="editmodel:AttributeEditModel" name="inputStream" id="de.berlios.pinacotheca.http/HTTPClientReader#inputStream"/>
-      <children xsi:type="editmodel:AttributeEditModel" name="outputStream" id="de.berlios.pinacotheca.http/HTTPClientReader#outputStream"/>
+<editmodel:ClassDiagramEditModel xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:editmodel="editmodel.xmi" xmlns:options="options.xmi" name="http" size="1656,642" id="de.berlios.pinacotheca.http" metadata="uml2-1.0" initialized="true" scrolledX="398" tag="1000" key="32303037303431392D313030302070696E61636F74686563612F73617376">
+  <children xsi:type="editmodel:ClassEditModel" name="HTTPClientHandler" location="691,412" size="331,175" id="de.berlios.pinacotheca.http/HTTPClientHandler" runTimeClassModel="inputStream,outputStream,run(),isSecure,readLine(),clientSocket,HTTPClientHandler(ZLjava.net.Socket;)">
+    <children xsi:type="editmodel:CompartmentEditModel" size="177,72">
+      <children xsi:type="editmodel:AttributeEditModel" name="clientSocket" id="de.berlios.pinacotheca.http/HTTPClientHandler#clientSocket"/>
+      <children xsi:type="editmodel:AttributeEditModel" name="inputStream" id="de.berlios.pinacotheca.http/HTTPClientHandler#inputStream"/>
+      <children xsi:type="editmodel:AttributeEditModel" name="outputStream" id="de.berlios.pinacotheca.http/HTTPClientHandler#outputStream"/>
+      <children xsi:type="editmodel:AttributeEditModel" name="isSecure" id="de.berlios.pinacotheca.http/HTTPClientHandler#isSecure"/>
     </children>
-    <children xsi:type="editmodel:CompartmentEditModel" size="213,54">
-      <children xsi:type="editmodel:MethodEditModel" name="HTTPClientReader" id="de.berlios.pinacotheca.http/HTTPClientReader#HTTPClientReader(Ljava.net.Socket;)"/>
-      <children xsi:type="editmodel:MethodEditModel" name="readLine" id="de.berlios.pinacotheca.http/HTTPClientReader#readLine()"/>
-      <children xsi:type="editmodel:MethodEditModel" name="run" id="de.berlios.pinacotheca.http/HTTPClientReader#run()"/>
+    <children xsi:type="editmodel:CompartmentEditModel" size="308,54">
+      <children xsi:type="editmodel:MethodEditModel" name="HTTPClientHandler" id="de.berlios.pinacotheca.http/HTTPClientHandler#HTTPClientHandler(ZLjava.net.Socket;)"/>
+      <children xsi:type="editmodel:MethodEditModel" name="readLine" id="de.berlios.pinacotheca.http/HTTPClientHandler#readLine()"/>
+      <children xsi:type="editmodel:MethodEditModel" name="run" id="de.berlios.pinacotheca.http/HTTPClientHandler#run()"/>
     </children>
     <children xsi:type="editmodel:CompartmentEditModel"/>
     <classifierPreferences xsi:type="editmodel:UMLClassDiagramClassifierPreference" showStereotype="true" showMethodsParameterTypes="true" showMethodsParameterNames="true" attributeSorter="Natural" methodSorter="Natural" innerClassSorter="Natural" showPrivateAttributes="true" showProtectedAttributes="true" showPublicAttributes="true" showPackageAttributes="true" showStaticAttributes="true" showProtectedMethods="true" showPublicMethods="true" showPackageMethods="true" showPrivateMethods="true" showStaticMethods="true" showProtectedInnerClasses="true" showPublicInnerClasses="true" showPackageInnerClasses="true" showPrivateInnerClasses="true" showStaticInnerClasses="true" showAttributeProperty="true" showAssociationMember="true"/>
@@ -159,7 +160,7 @@
     </sourceConnections>
     <classifierPreferences xsi:type="editmodel:UMLClassDiagramClassifierPreference" showStereotype="true" showMethodsParameterTypes="true" showMethodsParameterNames="true" attributeSorter="Natural" methodSorter="Natural" innerClassSorter="Natural" showPrivateAttributes="true" showProtectedAttributes="true" showPublicAttributes="true" showPackageAttributes="true" showStaticAttributes="true" showProtectedMethods="true" showPublicMethods="true" showPackageMethods="true" showPrivateMethods="true" showStaticMethods="true" showProtectedInnerClasses="true" showPublicInnerClasses="true" showPackageInnerClasses="true" showPrivateInnerClasses="true" showStaticInnerClasses="true" showAttributeProperty="true" showAssociationMember="true"/>
   </children>
-  <children xsi:type="editmodel:ClassEditModel" targetConnections="//@children.11/@sourceConnections.0" name="HTTPMessage" location="135,274" size="294,139" id="de.berlios.pinacotheca.http/HTTPMessage" runTimeClassModel="httpVersion,headerFields,setHeaderField(Ljava.lang.String;Ljava.lang.String;),getHeaderField(Ljava.lang.String;),payloadStream">
+  <children xsi:type="editmodel:ClassEditModel" targetConnections="//@children.11/@sourceConnections.0" name="HTTPMessage" location="135,274" size="294,139" id="de.berlios.pinacotheca.http/HTTPMessage" runTimeClassModel="httpVersion,headerFields,getHeaderField(Ljava.lang.String;),setHeaderField(Ljava.lang.String;Ljava.lang.String;),payloadStream">
     <children xsi:type="editmodel:CompartmentEditModel" size="203,54">
       <children xsi:type="editmodel:AttributeEditModel" name="headerFields" id="de.berlios.pinacotheca.http/HTTPMessage#headerFields"/>
       <children xsi:type="editmodel:AttributeEditModel" name="httpVersion" id="de.berlios.pinacotheca.http/HTTPMessage#httpVersion"/>
