@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<editmodel:ClassDiagramEditModel xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:editmodel="editmodel.xmi" xmlns:options="options.xmi" size="1107,660" id="de.berlios.pinacotheca" metadata="uml2-1.0" initialized="true" tag="1000" key="32303037303431392D313030302070696E61636F74686563612F73617376">
+  <children xsi:type="editmodel:PackageEditModel" name="de.berlios.pinacotheca.http" location="15,15" size="222,60" id="de.berlios.pinacotheca.http">
+    <packagePreferences xsi:type="editmodel:UMLClassDiagramPackagePreference" showStereotype="true"/>
+  </children>
+  <children xsi:type="editmodel:ClassEditModel" name="PTConfiguration" location="255,15" size="155,93" id="de.berlios.pinacotheca/PTConfiguration" runTimeClassModel="serverPort,serverSSLPort,serverRoot">
+    <children xsi:type="editmodel:CompartmentEditModel" size="122,54">
+      <children xsi:type="editmodel:AttributeEditModel" name="serverPort" id="de.berlios.pinacotheca/PTConfiguration#serverPort"/>
+      <children xsi:type="editmodel:AttributeEditModel" name="serverRoot" id="de.berlios.pinacotheca/PTConfiguration#serverRoot"/>
+      <children xsi:type="editmodel:AttributeEditModel" name="serverSSLPort" id="de.berlios.pinacotheca/PTConfiguration#serverSSLPort"/>
+    </children>
+    <children xsi:type="editmodel:CompartmentEditModel"/>
+    <children xsi:type="editmodel:CompartmentEditModel"/>
+    <classifierPreferences xsi:type="editmodel:UMLClassDiagramClassifierPreference" showStereotype="true" attributeSorter="Natural" methodSorter="Natural" innerClassSorter="Natural" showPublicAttributes="true" showPackageAttributes="true" showStaticAttributes="true" showPublicMethods="true" showPackageMethods="true" showStaticMethods="true" showPublicInnerClasses="true" showPackageInnerClasses="true" showStaticInnerClasses="true" showAttributeProperty="true"/>
+  </children>
+  <children xsi:type="editmodel:ClassEditModel" name="PTDispatcher" location="450,15" size="135,85" id="de.berlios.pinacotheca/PTDispatcher" runTimeClassModel="dispatch(Lde.berlios.pinacotheca.http.HTTPRequest;)">
+    <children xsi:type="editmodel:CompartmentEditModel"/>
+    <children xsi:type="editmodel:CompartmentEditModel" size="94,36">
+      <children xsi:type="editmodel:MethodEditModel" name="PTDispatcher" id="de.berlios.pinacotheca/PTDispatcher#PTDispatcher()"/>
+      <children xsi:type="editmodel:MethodEditModel" name="dispatch" id="de.berlios.pinacotheca/PTDispatcher#dispatch(Lde.berlios.pinacotheca.http.HTTPRequest;)"/>
+    </children>
+    <children xsi:type="editmodel:CompartmentEditModel"/>
+    <classifierPreferences xsi:type="editmodel:UMLClassDiagramClassifierPreference" showStereotype="true" attributeSorter="Natural" methodSorter="Natural" innerClassSorter="Natural" showPublicAttributes="true" showPackageAttributes="true" showStaticAttributes="true" showPublicMethods="true" showPackageMethods="true" showStaticMethods="true" showPublicInnerClasses="true" showPackageInnerClasses="true" showStaticInnerClasses="true" showAttributeProperty="true"/>
+  </children>
+  <children xsi:type="editmodel:InterfaceEditModel" name="PTModule" location="615,15" size="117,99" id="de.berlios.pinacotheca/PTModule" runTimeClassModel="setRequest(Lde.berlios.pinacotheca.http.HTTPRequest;),getResponse()">
+    <children xsi:type="editmodel:CompartmentEditModel"/>
+    <children xsi:type="editmodel:CompartmentEditModel" size="94,36">
+      <children xsi:type="editmodel:MethodEditModel" name="setRequest" id="de.berlios.pinacotheca/PTModule#setRequest(Lde.berlios.pinacotheca.http.HTTPRequest;)"/>
+      <children xsi:type="editmodel:MethodEditModel" name="getResponse" id="de.berlios.pinacotheca/PTModule#getResponse()"/>
+    </children>
+    <children xsi:type="editmodel:CompartmentEditModel"/>
+    <classifierPreferences xsi:type="editmodel:UMLClassDiagramClassifierPreference" showStereotype="true" attributeSorter="Natural" methodSorter="Natural" innerClassSorter="Natural" showPublicAttributes="true" showPackageAttributes="true" showStaticAttributes="true" showPublicMethods="true" showPackageMethods="true" showStaticMethods="true" showPublicInnerClasses="true" showPackageInnerClasses="true" showStaticInnerClasses="true" showAttributeProperty="true"/>
+  </children>
+  <children xsi:type="editmodel:PackageEditModel" name="de.berlios.pinacotheca.admin" location="15,105" size="236,60" id="de.berlios.pinacotheca.admin">
+    <packagePreferences xsi:type="editmodel:UMLClassDiagramPackagePreference" showStereotype="true"/>
+  </children>
+  <diagramOptions xsi:type="options:ClassDiagramOptions" properties="wireOptions=1" autoName="false"/>
+  <boardSetting snapToGeometry="true" gridEnabled="true" gridSpacing="15,15" gridOrigin="0,0" rulerUnit="pixel">
+    <leftRuler/>
+    <topRuler/>
+  </boardSetting>
+  <classDiagramPreferences xsi:type="editmodel:UMLClassDiagramPreference" attributeSorter="Natural" methodSorter="Natural" showClassStereotype="true" showPackageStereotype="true" innerClassSorter="Natural" showPublicAttributes="true" showPackageAttributes="true" showStaticAttributes="true" showPublicMethods="true" showPackageMethods="true" showStaticMethods="true" showPublicInnerClasses="true" showPackageInnerClasses="true" showStaticInnerClasses="true" showInterfaceStereotype="true" showAttributeProperty="true"/>
+</editmodel:ClassDiagramEditModel>
