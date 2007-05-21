@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<editmodel:ClassDiagramEditModel xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:editmodel="editmodel.xmi" xmlns:options="options.xmi" name="http" size="1656,642" id="de.berlios.pinacotheca.http" metadata="uml2-1.0" initialized="true" scrolledX="398" tag="1000" key="32303037303431392D313030302070696E61636F74686563612F73617376">
-  <children xsi:type="editmodel:ClassEditModel" name="HTTPClientHandler" location="691,412" size="331,175" id="de.berlios.pinacotheca.http/HTTPClientHandler" runTimeClassModel="inputStream,outputStream,run(),isSecure,readLine(),clientSocket,HTTPClientHandler(ZLjava.net.Socket;)">
+<editmodel:ClassDiagramEditModel xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:editmodel="editmodel.xmi" xmlns:options="options.xmi" name="http" size="1656,642" id="de.berlios.pinacotheca.http" metadata="uml2-1.0" initialized="true" scrolledX="552" tag="1000" key="32303037303431392D313030302070696E61636F74686563612F73617376">
+  <children xsi:type="editmodel:ClassEditModel" name="HTTPClientHandler" location="691,412" size="331,175" id="de.berlios.pinacotheca.http/HTTPClientHandler" runTimeClassModel="HTTPClientHandler(ZLjava.net.Socket;),readLine(),isSecure,outputStream,inputStream,clientSocket,run()">
     <children xsi:type="editmodel:CompartmentEditModel" size="177,72">
       <children xsi:type="editmodel:AttributeEditModel" name="clientSocket" id="de.berlios.pinacotheca.http/HTTPClientHandler#clientSocket"/>
       <children xsi:type="editmodel:AttributeEditModel" name="inputStream" id="de.berlios.pinacotheca.http/HTTPClientHandler#inputStream"/>
@@ -15,7 +15,7 @@
     <children xsi:type="editmodel:CompartmentEditModel"/>
     <classifierPreferences xsi:type="editmodel:UMLClassDiagramClassifierPreference" showStereotype="true" showMethodsParameterTypes="true" showMethodsParameterNames="true" attributeSorter="Natural" methodSorter="Natural" innerClassSorter="Natural" showPrivateAttributes="true" showProtectedAttributes="true" showPublicAttributes="true" showPackageAttributes="true" showStaticAttributes="true" showProtectedMethods="true" showPublicMethods="true" showPackageMethods="true" showPrivateMethods="true" showStaticMethods="true" showProtectedInnerClasses="true" showPublicInnerClasses="true" showPackageInnerClasses="true" showPrivateInnerClasses="true" showStaticInnerClasses="true" showAttributeProperty="true" showAssociationMember="true"/>
   </children>
-  <children xsi:type="editmodel:ClassEditModel" name="HTTPMessageBuidler" location="433,274" size="256,103" id="de.berlios.pinacotheca.http/HTTPMessageBuidler" runTimeClassModel="message,HTTPMessageBuidler(Ljava.lang.String;),parseHeader(Ljava.lang.String;)">
+  <children xsi:type="editmodel:ClassEditModel" name="HTTPMessageBuidler" location="433,274" size="256,103" id="de.berlios.pinacotheca.http/HTTPMessageBuidler" runTimeClassModel="parseHeader(Ljava.lang.String;),HTTPMessageBuidler(Ljava.lang.String;),message">
     <children xsi:type="editmodel:CompartmentEditModel" size="138,18">
       <children xsi:type="editmodel:AttributeEditModel" name="message" id="de.berlios.pinacotheca.http/HTTPMessageBuidler#message"/>
     </children>
@@ -26,7 +26,7 @@
     <children xsi:type="editmodel:CompartmentEditModel"/>
     <classifierPreferences xsi:type="editmodel:UMLClassDiagramClassifierPreference" showStereotype="true" showMethodsParameterTypes="true" showMethodsParameterNames="true" attributeSorter="Natural" methodSorter="Natural" innerClassSorter="Natural" showPrivateAttributes="true" showProtectedAttributes="true" showPublicAttributes="true" showPackageAttributes="true" showStaticAttributes="true" showProtectedMethods="true" showPublicMethods="true" showPackageMethods="true" showPrivateMethods="true" showStaticMethods="true" showProtectedInnerClasses="true" showPublicInnerClasses="true" showPackageInnerClasses="true" showPrivateInnerClasses="true" showStaticInnerClasses="true" showAttributeProperty="true" showAssociationMember="true"/>
   </children>
-  <children xsi:type="editmodel:ClassEditModel" targetConnections="//@children.14/@sourceConnections.0" name="HTTPServer" location="1125,274" size="256,139" id="de.berlios.pinacotheca.http/HTTPServer" runTimeClassModel="serverSocket,run(),HTTPServer(),HTTPServer(Lde.berlios.pinacotheca.PTConfiguration;),configuration">
+  <children xsi:type="editmodel:ClassEditModel" targetConnections="//@children.14/@sourceConnections.0" name="HTTPServer" location="1125,274" size="256,139" id="de.berlios.pinacotheca.http/HTTPServer" runTimeClassModel="HTTPServer(),HTTPServer(Lde.berlios.pinacotheca.PTConfiguration;),configuration,serverSocket,run()">
     <children xsi:type="editmodel:CompartmentEditModel" size="164,36">
       <children xsi:type="editmodel:AttributeEditModel" name="configuration" id="de.berlios.pinacotheca.http/HTTPServer#configuration"/>
       <children xsi:type="editmodel:AttributeEditModel" name="serverSocket" id="de.berlios.pinacotheca.http/HTTPServer#serverSocket"/>
@@ -39,7 +39,7 @@
     <children xsi:type="editmodel:CompartmentEditModel"/>
     <classifierPreferences xsi:type="editmodel:UMLClassDiagramClassifierPreference" showStereotype="true" showMethodsParameterTypes="true" showMethodsParameterNames="true" attributeSorter="Natural" methodSorter="Natural" innerClassSorter="Natural" showPrivateAttributes="true" showProtectedAttributes="true" showPublicAttributes="true" showPackageAttributes="true" showStaticAttributes="true" showProtectedMethods="true" showPublicMethods="true" showPackageMethods="true" showPrivateMethods="true" showStaticMethods="true" showProtectedInnerClasses="true" showPublicInnerClasses="true" showPackageInnerClasses="true" showPrivateInnerClasses="true" showStaticInnerClasses="true" showAttributeProperty="true" showAssociationMember="true"/>
   </children>
-  <children xsi:type="editmodel:ClassEditModel" name="HTTPResponder" location="675,274" size="360,121" id="de.berlios.pinacotheca.http/HTTPResponder" runTimeClassModel="HTTPResponder(Ljava.net.Socket;Lde.berlios.pinacotheca.http.HTTPResponse;),run(),HTTPResponder(Ljava.net.Socket;Lde.berlios.pinacotheca.http.HTTPRequest;),clientSocket">
+  <children xsi:type="editmodel:ClassEditModel" name="HTTPResponder" location="675,274" size="360,121" id="de.berlios.pinacotheca.http/HTTPResponder" runTimeClassModel="HTTPResponder(Ljava.net.Socket;Lde.berlios.pinacotheca.http.HTTPResponse;),HTTPResponder(Ljava.net.Socket;Lde.berlios.pinacotheca.http.HTTPRequest;),clientSocket,run()">
     <children xsi:type="editmodel:CompartmentEditModel" size="116,18">
       <children xsi:type="editmodel:AttributeEditModel" name="clientSocket" id="de.berlios.pinacotheca.http/HTTPResponder#clientSocket"/>
     </children>
@@ -87,7 +87,7 @@
     </sourceConnections>
     <classifierPreferences xsi:type="editmodel:UMLClassDiagramClassifierPreference" showStereotype="true" showMethodsParameterTypes="true" showMethodsParameterNames="true" attributeSorter="Natural" methodSorter="Natural" innerClassSorter="Natural" showPrivateAttributes="true" showProtectedAttributes="true" showPublicAttributes="true" showPackageAttributes="true" showStaticAttributes="true" showProtectedMethods="true" showPublicMethods="true" showPackageMethods="true" showPrivateMethods="true" showStaticMethods="true" showProtectedInnerClasses="true" showPublicInnerClasses="true" showPackageInnerClasses="true" showPrivateInnerClasses="true" showStaticInnerClasses="true" showAttributeProperty="true" showAssociationMember="true"/>
   </children>
-  <children xsi:type="editmodel:ClassEditModel" targetConnections="//@children.10/@sourceConnections.0" name="HTTPException" location="762,50" size="341,85" id="de.berlios.pinacotheca.http/HTTPException" runTimeClassModel="getResponse(),hTTPNotImplementedException">
+  <children xsi:type="editmodel:ClassEditModel" targetConnections="//@children.10/@sourceConnections.0" name="HTTPException" location="762,50" size="341,85" id="de.berlios.pinacotheca.http/HTTPException" runTimeClassModel="hTTPNotImplementedException,getResponse()">
     <children xsi:type="editmodel:CompartmentEditModel" size="318,18">
       <children xsi:type="editmodel:AttributeEditModel" name="hTTPNotImplementedException" id="de.berlios.pinacotheca.http/HTTPException@hTTPException+de.berlios.pinacotheca.http/HTTPNotImplementedException@hTTPNotImplementedException|de.berlios.pinacotheca.http/HTTPNotImplementedException#hTTPNotImplementedException"/>
     </children>
@@ -97,7 +97,7 @@
     <children xsi:type="editmodel:CompartmentEditModel"/>
     <classifierPreferences xsi:type="editmodel:UMLClassDiagramClassifierPreference" showStereotype="true" showMethodsParameterTypes="true" showMethodsParameterNames="true" attributeSorter="Natural" methodSorter="Natural" innerClassSorter="Natural" showPrivateAttributes="true" showProtectedAttributes="true" showPublicAttributes="true" showPackageAttributes="true" showStaticAttributes="true" showProtectedMethods="true" showPublicMethods="true" showPackageMethods="true" showPrivateMethods="true" showStaticMethods="true" showProtectedInnerClasses="true" showPublicInnerClasses="true" showPackageInnerClasses="true" showPrivateInnerClasses="true" showStaticInnerClasses="true" showAttributeProperty="true" showAssociationMember="true"/>
   </children>
-  <children xsi:type="editmodel:ClassEditModel" name="HTTPNotImplementedException" location="570,195" size="262,75" id="de.berlios.pinacotheca.http/HTTPNotImplementedException" runTimeClassModel="response,hTTPException">
+  <children xsi:type="editmodel:ClassEditModel" name="HTTPNotImplementedException" location="570,195" size="262,75" id="de.berlios.pinacotheca.http/HTTPNotImplementedException" runTimeClassModel="hTTPException,response">
     <children xsi:type="editmodel:CompartmentEditModel" size="168,36">
       <children xsi:type="editmodel:AttributeEditModel" name="hTTPException" id="de.berlios.pinacotheca.http/HTTPException@hTTPException+de.berlios.pinacotheca.http/HTTPNotImplementedException@hTTPNotImplementedException|de.berlios.pinacotheca.http/HTTPException#hTTPException"/>
       <children xsi:type="editmodel:AttributeEditModel" name="response" id="de.berlios.pinacotheca.http/HTTPNotImplementedException#response"/>
@@ -160,7 +160,7 @@
     </sourceConnections>
     <classifierPreferences xsi:type="editmodel:UMLClassDiagramClassifierPreference" showStereotype="true" showMethodsParameterTypes="true" showMethodsParameterNames="true" attributeSorter="Natural" methodSorter="Natural" innerClassSorter="Natural" showPrivateAttributes="true" showProtectedAttributes="true" showPublicAttributes="true" showPackageAttributes="true" showStaticAttributes="true" showProtectedMethods="true" showPublicMethods="true" showPackageMethods="true" showPrivateMethods="true" showStaticMethods="true" showProtectedInnerClasses="true" showPublicInnerClasses="true" showPackageInnerClasses="true" showPrivateInnerClasses="true" showStaticInnerClasses="true" showAttributeProperty="true" showAssociationMember="true"/>
   </children>
-  <children xsi:type="editmodel:ClassEditModel" targetConnections="//@children.11/@sourceConnections.0" name="HTTPMessage" location="135,274" size="294,139" id="de.berlios.pinacotheca.http/HTTPMessage" runTimeClassModel="httpVersion,headerFields,getHeaderField(Ljava.lang.String;),setHeaderField(Ljava.lang.String;Ljava.lang.String;),payloadStream">
+  <children xsi:type="editmodel:ClassEditModel" targetConnections="//@children.11/@sourceConnections.0" name="HTTPMessage" location="135,274" size="294,139" id="de.berlios.pinacotheca.http/HTTPMessage" runTimeClassModel="payloadStream,setHeaderField(Ljava.lang.String;Ljava.lang.String;),headerFields,getHeaderField(Ljava.lang.String;),httpVersion">
     <children xsi:type="editmodel:CompartmentEditModel" size="203,54">
       <children xsi:type="editmodel:AttributeEditModel" name="headerFields" id="de.berlios.pinacotheca.http/HTTPMessage#headerFields"/>
       <children xsi:type="editmodel:AttributeEditModel" name="httpVersion" id="de.berlios.pinacotheca.http/HTTPMessage#httpVersion"/>

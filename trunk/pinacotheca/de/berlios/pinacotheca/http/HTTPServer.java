@@ -12,10 +12,7 @@ public class HTTPServer implements Runnable {
 	public HTTPServer(PTConfiguration configuration) throws IOException {
 	}
 
-	protected HTTPServer() {
-	}
-
-	/** 
+	/**
 	 * @uml.property name="configuration"
 	 */
 	private PTConfiguration configuration;
@@ -51,8 +48,9 @@ public class HTTPServer implements Runnable {
 
 	/**
 	 * Getter of the property <tt>configuration</tt>
-	 * @return  Returns the configuration.
-	 * @uml.property  name="configuration"
+	 * 
+	 * @return Returns the configuration.
+	 * @uml.property name="configuration"
 	 */
 	protected PTConfiguration getConfiguration() {
 		return configuration;
@@ -60,11 +58,18 @@ public class HTTPServer implements Runnable {
 
 	/**
 	 * Setter of the property <tt>configuration</tt>
-	 * @param configuration  The configuration to set.
-	 * @uml.property  name="configuration"
+	 * 
+	 * @param configuration
+	 *            The configuration to set.
+	 * @uml.property name="configuration"
 	 */
 	protected void setConfiguration(PTConfiguration configuration) {
 		this.configuration = configuration;
+	}
+
+	/**
+	 */
+	protected HTTPServer() {
 	}
 
 }
