@@ -2,6 +2,10 @@ package de.berlios.pinacotheca.db;
 
 
 public class AOTag {
+	
+	public AOTag(int id, String name){
+		
+	}
 
 	/**
 	 * @uml.property  name="id"
