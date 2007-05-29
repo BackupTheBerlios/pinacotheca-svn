@@ -8,14 +8,14 @@ public class AOPhoto {
 	/**
 	 * @uml.property  name="id"
 	 */
-	private long id;
+	private int id;
 
 	/**
 	 * Getter of the property <tt>id</tt>
 	 * @return  Returns the id.
 	 * @uml.property  name="id"
 	 */
-	public long getId() {
+	public int getId() {
 		return id;
 	}
 
@@ -24,7 +24,7 @@ public class AOPhoto {
 	 * @param id  The id to set.
 	 * @uml.property  name="id"
 	 */
-	public void setId(long id) {
+	public void setId(int id) {
 		this.id = id;
 	}
 
@@ -123,7 +123,10 @@ public class AOPhoto {
 		
 		/**
 		 */
-		public AOPhoto(long id, int albumId, String origFileName){
+		public AOPhoto(int id, int albumId, String origFileName){
+			this.id = id;
+			this.albumId = albumId;
+			this.origFileName = origFileName;
 		}
 
 		/**

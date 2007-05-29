@@ -1,102 +1,137 @@
 package de.berlios.pinacotheca.db;
 
+import java.io.File;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.ArrayList;
 
 import de.berlios.pinacotheca.PTConfiguration;
 
 public class DatabaseHandler {
 
-	/**
-	 * @uml.property name="configuration"
-	 */
-	private PTConfiguration configuration;
-
 	private Connection dbConnection;
 
-
-	/**
-	 */
-	private DatabaseHandler() {
+	public DatabaseHandler() {
 
 	}
 
-	public void init(PTConfiguration configuration) throws DatabaseException {
+	/**
+	 * method to open the Database connection. if the Database not created
+	 * before, create Database pinacothecaDB and create the tables in this db
+	 * 
+	 * @throws DatabaseException
+	 */
+	public void init() throws DatabaseException {
 
-		System.setProperty("derby.system.home", "C:/Basti/db");
+		File dbDir = new File(PTConfiguration.getServerRoot(), "db");
+		File testFile = new File(dbDir, "pinacothecaDB");
+
+		boolean createTables = !testFile.isDirectory();
+		
+		System.out.println(createTables);
+
+		System.setProperty("derby.system.home", dbDir.getPath());
 
 		try {
-
 			Class.forName("org.apache.derby.jdbc.EmbeddedDriver");
 
 			this.dbConnection = DriverManager
-					.getConnection("jdbc:derby:TestDB;create=true");
+					.getConnection("jdbc:derby:pinacothecaDB;create=true");
 
+			/**
+			 * if database never create before
+			 */
+			if (createTables) {
+				
+				System.out.println("create Table");
+
+				/**
+				 * create table album
+				 */
+				dbConnection.createStatement().executeUpdate(
+						"CREATE TABLE " + "album" + " ("
+								+ "aid INTEGER PRIMARY KEY,"
+								+ "name VARCHAR(50),"
+								+ "description VARCHAR(100) )");
+
+				/**
+				 * create table photo
+				 */
+				dbConnection.createStatement().executeUpdate(
+						"CREATE TABLE " + "photo" + " ("
+								+ "pid INTEGER PRIMARY KEY,"
+								+ "aid INTEGER REFERENCES album(aid),"
+								+ "origFileName VARCHAR(50),"
+								+ "description VARCHAR(100),"
+								+ "metadata VARCHAR(1024) )");
+
+				/**
+				 * create table tag
+				 */
+				dbConnection.createStatement().executeUpdate(
+						"CREATE TABLE " + "tag" + " ("
+								+ "tid INTEGER PRIMARY KEY,"
+								+ "name VARCHAR(50) )");
+
+				/**
+				 * create table photo_tag
+				 */
+				dbConnection.createStatement().executeUpdate(
+						"CREATE TABLE " + "photo_tag" + " ("
+								+ "pid INTEGER REFERENCES photo,"
+								+ "tid INTEGER REFERENCES tag,"
+								+ "PRIMARY KEY (pid, tid) )");
+			}
 
 		} catch (ClassNotFoundException e) {
 			throw new DatabaseException(e.getMessage());
 		} catch (SQLException e) {
 			throw new DatabaseException(e.getMessage());
 		}
-
 	}
 	
+	/**
+	 * method to build a Album Objekt
+	 * 
+	 * @param rs
+	 * @return
+	 * @throws SQLException
+	 */
+	private AOAlbum buildAlbumAO(ResultSet rs) throws SQLException {
 
-	// method to make a ArrayList of all albums from the database
-	// create by ebse. right?
-	public ArrayList<AOAlbum> getAlbums() throws DatabaseException {
+		AOAlbum album;
 
-		ResultSet rs;
-		ArrayList<AOAlbum> list = null;
+		int aid = rs.getInt("aid");
+		String name = rs.getString("name");
+		String description = rs.getString("description");
 
-		try {
-			
-			rs = dbConnection.createStatement().executeQuery("SELECT * FROM album");
+		album = new AOAlbum(aid, name);
+		album.setDescription(description);
 
-			while (rs.next()) {
-
-				int id = rs.getInt(1);
-				String name = rs.getString(2);
-
-				AOAlbum album = new AOAlbum(id, name);
-
-				album.setDescription(rs.getString(3));
-
-				list.add(album);
-			}
-			rs.close();
-		} catch (SQLException e) {
-			throw new DatabaseException(e.getMessage());
-		}
-
-		return list;
+		return album;
 	}
 
-	// method to read the albim with the aid id from the database
-	// create by ebse. right?
+	/**
+	 * method to read the album with the aid id from the database
+	 * 
+	 * @param id
+	 * @return
+	 * @throws DatabaseException
+	 */
 	public AOAlbum getAlbum(int id) throws DatabaseException {
 
 		AOAlbum album = null;
 
-		String aid = Integer.toString(id);
-
 		ResultSet rs;
 		try {
-			rs = dbConnection.createStatement().executeQuery("SELECT * FROM album WHERE id = "
-					+ aid);
-
+			rs = dbConnection.createStatement()
+					.executeQuery(
+							"SELECT aid, name, discription FROM album WHERE id = "
+									+ id);
 			while (rs.next()) {
-
-				String name = rs.getString(2);
-
-				album = new AOAlbum(id, name);
-
-				album.setDescription(rs.getString(3));
-
+				album = buildAlbumAO(rs);
 			}
 			rs.close();
 		} catch (SQLException e) {
@@ -105,30 +140,29 @@ public class DatabaseHandler {
 		return album;
 	}
 
-	// rigth return value ArrayList? was void before!
-	// method to make a ArrayList of all photos from a album
-	// create by ebse. right?
-	public ArrayList<AOPhoto> getPhotos(AOAlbum album) throws DatabaseException {
+	/**
+	 * method to make a ArrayList of all albums from the database
+	 * 
+	 * @return
+	 * @throws DatabaseException
+	 */
+	public ArrayList<AOAlbum> getAlbums() throws DatabaseException {
 
 		ResultSet rs;
-		ArrayList<AOPhoto> list = null;
-
-		String aid = Integer.toString(album.getId());
+		ArrayList<AOAlbum> list = null;
 
 		try {
-			rs = dbConnection.createStatement().executeQuery("SELECT * FROM photo WHERE aid = "
-					+ aid);
+			rs = dbConnection.createStatement().executeQuery(
+					"SELECT aid, name, discription FROM album");
 
 			while (rs.next()) {
-
-				AOPhoto photo = buildPhotoAO(rs);
-				list.add(photo);
+				AOAlbum album = buildAlbumAO(rs);
+				list.add(album);
 			}
 			rs.close();
 		} catch (SQLException e) {
 			throw new DatabaseException(e.getMessage());
 		}
-
 		return list;
 	}
 
@@ -136,7 +170,7 @@ public class DatabaseHandler {
 
 		AOPhoto photo;
 
-		long pid = rs.getLong("pid");
+		int pid = rs.getInt("pid");
 		int aid = rs.getInt("aid");
 		String description = rs.getString("description");
 		String origFileName = rs.getString("origFileName");
@@ -151,19 +185,17 @@ public class DatabaseHandler {
 
 	// method to read the photo with the pid id from the database
 	// create by ebse. right?
-	public AOPhoto getPhoto(long id) throws DatabaseException {
+	public AOPhoto getPhoto(int id) throws DatabaseException {
 
 		AOPhoto photo = null;
 		ResultSet rs;
 
-		String pid = Long.toString(id);
-
 		try {
-			rs = dbConnection.createStatement().executeQuery("SELECT * FROM photo WHERE pid = "
-					+ pid);
+			rs = dbConnection.createStatement().executeQuery(
+					"SELECT pid, aid, origFilename, description, metadata"
+							+ " FROM photo WHERE pid = " + id);
 
 			if (rs.next()) {
-
 				photo = buildPhotoAO(rs);
 			}
 			rs.close();
@@ -171,6 +203,32 @@ public class DatabaseHandler {
 			throw new DatabaseException(e.getMessage());
 		}
 		return photo;
+	}
+
+	// rigth return value ArrayList? was void before!
+	// method to make a ArrayList of all photos from a album
+	// create by ebse. right?
+	public void getPhotos(AOAlbum album) throws DatabaseException {
+
+		ResultSet rs;
+		ArrayList<AOPhoto> list = null;
+
+		int aid = album.getId();
+
+		try {
+			rs = dbConnection.createStatement().executeQuery(
+					"SELECT pid, aid, origFilename, description, metadata "
+							+ "FROM photo WHERE aid = " + aid);
+
+			while (rs.next()) {
+				AOPhoto photo = buildPhotoAO(rs);
+				list.add(photo);
+			}
+			rs.close();
+		} catch (SQLException e) {
+			throw new DatabaseException(e.getMessage());
+		}
+		album.setPhotos(list);
 	}
 
 	// method to make a ArrayList of photos with the number of num who are
@@ -183,26 +241,25 @@ public class DatabaseHandler {
 		ResultSet rs;
 		ArrayList<AOPhoto> list = null;
 
-		String aid = Integer.toString(photo.getAlbumId());
-		long pid = photo.getId();
+		int aid = photo.getAlbumId();
+		int pid = photo.getId();
 
 		try {
-			rs = dbConnection.createStatement().executeQuery("SELECT * FROM photo WHERE aid = "
-					+ aid + " AND pid > " + pid + " ORDER BY pid ASC LIMIT 0,"
-					+ num);
+			rs = dbConnection.createStatement().executeQuery(
+					"SELECT pid, aid, origFilename, description, metadata"
+							+ " FROM photo WHERE aid = " + aid + " AND pid > "
+							+ pid + " ORDER BY pid ASC LIMIT 0," + num);
 
 			while (rs.next()) {
 
-				long id = rs.getLong(1);
+				int id = rs.getInt(1);
 				AOPhoto lPhoto = getPhoto(id);
 				list.add(lPhoto);
 			}
-
 			rs.close();
 		} catch (SQLException e) {
 			throw new DatabaseException(e.getMessage());
 		}
-
 		return list;
 	}
 
@@ -215,107 +272,118 @@ public class DatabaseHandler {
 		ResultSet rs;
 		ArrayList<AOPhoto> list = null;
 
-		String aid = Integer.toString(photo.getAlbumId());
-		long pid = photo.getId();
+		int aid = photo.getAlbumId();
+		int pid = photo.getId();
 
 		try {
-			rs = dbConnection.createStatement().executeQuery("SELECT * FROM photo WHERE aid = "
-					+ aid + " AND pid < " + pid + " ORDER BY pid DESC LIMIT 0,"
-					+ num);
-
-			while (rs.next()) {
-
-				long id = rs.getLong(1);
-				AOPhoto lPhoto = getPhoto(id);
-				list.add(lPhoto);
-			}
-
-			rs.close();
-		} catch (SQLException e) {
-			throw new DatabaseException(e.getMessage());
-		}
-
-		return list;
-	}
-
-	// rigth return value ArrayList? was void before!
-	// create by ebse. right?
-	// method to to read all tags from a photo out of the database and put they
-	// into a ArrayList
-	public ArrayList<AOTag> getTags(AOPhoto photo) throws DatabaseException {
-
-		ResultSet rs;
-		ArrayList<AOTag> list = null;
-
-		String pid = Long.toString(photo.getId());
-
-		try {
-			rs = dbConnection.createStatement()
-					.executeQuery("SELECT tag.tid, tag.name FROM tag "
-							+ "INNER JOIN photo_tag ON tag.tid = photo_tag.tid "
-							+ "WHERE photo_tag.pid = " + pid);
+			rs = dbConnection.createStatement().executeQuery(
+					"SELECT pid, aid, origFilename, description, metadata"
+							+ " FROM photo WHERE aid = " + aid + " AND pid < "
+							+ pid + " ORDER BY pid DESC LIMIT 0," + num);
 
 			while (rs.next()) {
 
 				int id = rs.getInt(1);
-				String name = rs.getString(2);
+				AOPhoto lPhoto = getPhoto(id);
+				list.add(lPhoto);
+			}
+			rs.close();
+		} catch (SQLException e) {
+			throw new DatabaseException(e.getMessage());
+		}
+		return list;
+	}
 
-				AOTag tag = new AOTag(id, name);
+	private AOTag buildTagAO(ResultSet rs) throws SQLException {
 
+		AOTag tag;
+
+		int tid = rs.getInt("tid");
+		String name = rs.getString("name");
+
+		tag = new AOTag(tid, name);
+
+		return tag;
+	}
+
+	// method to to read all tags from a photo out of the database and put they
+	// into a ArrayList and set this ArrayList to the photo
+	public void getTags(AOPhoto photo) throws DatabaseException {
+
+		ResultSet rs;
+		ArrayList<AOTag> list = null;
+
+		int pid = photo.getId();
+
+		try {
+			rs = dbConnection.createStatement().executeQuery(
+					"SELECT tag.tid, tag.name FROM tag "
+							+ "INNER JOIN photo_tag "
+							+ "ON tag.tid = photo_tag.tid "
+							+ "WHERE photo_tag.pid = " + pid);
+
+			while (rs.next()) {
+
+				AOTag tag = buildTagAO(rs);
 				list.add(tag);
 			}
 			rs.close();
 		} catch (SQLException e) {
 			throw new DatabaseException(e.getMessage());
 		}
-
-		return list;
+		photo.setTags(list);
 	}
 
 	// method to write a photo into the database table photo
 	// create by ebse. rigth and rigth place or other class?
-	public void writePhoto(AOPhoto photo) throws DatabaseException {
+	public void addPhoto(AOPhoto photo) throws DatabaseException {
 
-		int pid = (int) photo.getId();
-
-		String values = "VALUES (" + pid + "," + photo.getAlbumId() + ", '"
-				+ photo.getOrigFileName() + "', '" + photo.getDescription()
-				+ "', '" + photo.getMetadata() + "')";
+		String values = "VALUES (" + photo.getId() + "," + photo.getAlbumId()
+				+ ", '" + photo.getOrigFileName() + "', '"
+				+ photo.getDescription() + "', '" + photo.getMetadata() + "')";
 
 		try {
-			dbConnection.createStatement()
-					.executeUpdate("INSERT INTO photo (pid, aid, origFileName, "
+			dbConnection.createStatement().executeUpdate(
+					"INSERT INTO photo (pid, aid, origFileName, "
 							+ "description, metadata)" + values);
 		} catch (SQLException e) {
 			throw new DatabaseException(e.getMessage());
 		}
 	}
 
-	// method to write a album into the database table album
-	// create by ebse. rigth and rigth place or other class?
-	public void writeAlbum(AOAlbum album) throws DatabaseException {
+	/**
+	 * method to write a album into the database table album
+	 * 
+	 * @param album
+	 * @throws DatabaseException
+	 */
+	public void addAlbum(AOAlbum album) throws DatabaseException {
 
 		String values = "VALUES (" + album.getId() + "," + album.getName()
 				+ "', '" + album.getDescription() + "')";
 
 		try {
-			dbConnection.createStatement().executeUpdate("INSERT INTO album (aid, name,"
-					+ " description)" + values);
+			dbConnection.createStatement().executeUpdate(
+					"INSERT INTO album (aid, name, description)" + values);
 		} catch (SQLException e) {
 			throw new DatabaseException(e.getMessage());
 		}
 
 	}
 
-	// method to write a tag into the database table tag
-	// create by ebse. rigth and rigth place or other class?
-	public void writeTag(AOTag tag) throws DatabaseException {
+	/**
+	 * method to write a tag into the database table tag
+	 * 
+	 * @param tag
+	 * @throws DatabaseException
+	 */
+	public void addTag(AOTag tag) throws DatabaseException {
 
 		String values = "VALUES (" + tag.getId() + "," + tag.getName() + "')";
 
 		try {
-			dbConnection.createStatement()
-					.executeUpdate("INSERT INTO tag (tid, name)" + values);
+			dbConnection.createStatement().executeUpdate(
+					"INSERT INTO tag (tid, name)" + values);
 		} catch (SQLException e) {
 			throw new DatabaseException(e.getMessage());
 		}

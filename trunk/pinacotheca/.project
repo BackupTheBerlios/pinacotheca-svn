@@ -19,5 +19,6 @@
 	<natures>
 		<nature>org.eclipse.jdt.core.javanature</nature>
 		<nature>com.soyatec.uml.std.Nature</nature>
+		<nature>org.apache.derby.ui.derbyEngine</nature>
 	</natures>
 </projectDescription>

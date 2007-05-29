@@ -2,5 +2,9 @@
 <classpath>
 	<classpathentry kind="src" path=""/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="lib" path="D:/Tools/Eclipse/eclipse-SDK-3.2.1-win32/eclipse/plugins/org.apache.derby.core_10.2.2/derby.jar"/>
+	<classpathentry kind="lib" path="D:/Tools/Eclipse/eclipse-SDK-3.2.1-win32/eclipse/plugins/org.apache.derby.core_10.2.2/derbyclient.jar"/>
+	<classpathentry kind="lib" path="D:/Tools/Eclipse/eclipse-SDK-3.2.1-win32/eclipse/plugins/org.apache.derby.core_10.2.2/derbytools.jar"/>
+	<classpathentry kind="lib" path="D:/Tools/Eclipse/eclipse-SDK-3.2.1-win32/eclipse/plugins/org.apache.derby.core_10.2.2/derbynet.jar"/>
 	<classpathentry kind="output" path=""/>
 </classpath>
