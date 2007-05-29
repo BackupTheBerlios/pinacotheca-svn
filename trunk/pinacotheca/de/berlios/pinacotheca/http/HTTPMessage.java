@@ -2,71 +2,43 @@ package de.berlios.pinacotheca.http;
 
 import java.io.InputStream;
 import java.util.HashMap;
+import java.util.Set;
 
 public abstract class HTTPMessage {
+	private HashMap<String, String> headerFields = new HashMap<String, String>();
 
-	public String getHeaderField(String fieldName) throws HTTPException {
+	private String httpVersion = null;
 
-		return "";
+	private InputStream payloadStream = null;
+
+	public boolean containsHeaderField(String fieldName) {
+		return headerFields.containsKey(fieldName);
 	}
 
-	public void setHeaderField(String fieldName, String fieldValue)
-			throws HTTPException {
+	public String getHeaderField(String fieldName) {
+		return headerFields.get(fieldName);
 	}
 
-	/**
-	 * @uml.property name="headerFields"
-	 */
-	private HashMap<String, String> headerFields;
+	public void setHeaderField(String fieldName, String fieldValue) {
+		headerFields.put(fieldName, fieldValue);
+	}
 
-	/**
-	 * @uml.property name="httpVersion"
-	 */
-	private String httpVersion = "null";
+	public Set<String> getHeaderFieldNames() {
+		return headerFields.keySet();
+	}
 
-	/**
-	 * Getter of the property <tt>httpVersion</tt>
-	 * 
-	 * @return Returns the httpVersion.
-	 * @uml.property name="httpVersion"
-	 */
 	public String getHttpVersion() {
 		return httpVersion;
 	}
 
-	/**
-	 * Setter of the property <tt>httpVersion</tt>
-	 * 
-	 * @param httpVersion
-	 *            The httpVersion to set.
-	 * @uml.property name="httpVersion"
-	 */
 	public void setHttpVersion(String httpVersion) {
 		this.httpVersion = httpVersion;
 	}
 
-	/**
-	 * @uml.property name="payloadStream"
-	 */
-	private InputStream payloadStream = null;
-
-	/**
-	 * Getter of the property <tt>payloadStream</tt>
-	 * 
-	 * @return Returns the payloadStream.
-	 * @uml.property name="payloadStream"
-	 */
 	public InputStream getPayloadStream() {
 		return payloadStream;
 	}
 
-	/**
-	 * Setter of the property <tt>payloadStream</tt>
-	 * 
-	 * @param payloadStream
-	 *            The payloadStream to set.
-	 * @uml.property name="payloadStream"
-	 */
 	public void setPayloadStream(InputStream payloadStream) {
 		this.payloadStream = payloadStream;
 	}

@@ -1,24 +1,16 @@
 package de.berlios.pinacotheca;
 
-import de.berlios.pinacotheca.http.HTTPException;
 import de.berlios.pinacotheca.http.HTTPRequest;
 import de.berlios.pinacotheca.http.HTTPResponse;
-
+import de.berlios.pinacotheca.http.exceptions.HTTPException;
 
 public interface PTModule {
 
-		
-		/**
-			 */
-			public abstract HTTPResponse getResponse();
+	public HTTPResponse getResponse();
 
-			
-				
-				
-				public abstract void handleRequest()	throws HTTPException ;
-				
-			
-			
-		
+	public void handleRequest() throws HTTPException;
 
+	public void setSecureConnection(boolean isSecure);
+	
+	public void setRequest(HTTPRequest request);
 }

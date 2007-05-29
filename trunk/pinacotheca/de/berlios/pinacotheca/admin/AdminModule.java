@@ -1,31 +1,27 @@
 package de.berlios.pinacotheca.admin;
 
-import de.berlios.pinacotheca.PTConfiguration;
 import de.berlios.pinacotheca.PTModule;
-import de.berlios.pinacotheca.http.HTTPException;
 import de.berlios.pinacotheca.http.HTTPRequest;
 import de.berlios.pinacotheca.http.HTTPResponse;
+import de.berlios.pinacotheca.http.exceptions.HTTPException;
 
 public class AdminModule implements PTModule {
+	private HTTPRequest request;
+
+	private boolean secureConnection;
 
 	public HTTPResponse getResponse() {
 		return null;
 	}
 
-		
-		/**
-		 */
-		public AdminModule(PTConfiguration configuration, HTTPRequest request){
-		}
-
-	/**
-	 * @uml.property name="request"
-	 */
-	private HTTPRequest request;
-
 	public void handleRequest() throws HTTPException {
-		// TODO Auto-generated method stub
-
 	}
 
+	public void setSecureConnection(boolean secureConnection) {
+		this.secureConnection = secureConnection;
+	}
+
+	public void setRequest(HTTPRequest request) {
+		this.request = request;
+	}
 }

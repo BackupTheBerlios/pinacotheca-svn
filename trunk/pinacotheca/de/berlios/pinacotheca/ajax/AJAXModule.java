@@ -1,28 +1,27 @@
 package de.berlios.pinacotheca.ajax;
 
-import de.berlios.pinacotheca.PTConfiguration;
 import de.berlios.pinacotheca.PTModule;
-import de.berlios.pinacotheca.http.HTTPException;
 import de.berlios.pinacotheca.http.HTTPRequest;
 import de.berlios.pinacotheca.http.HTTPResponse;
-
+import de.berlios.pinacotheca.http.exceptions.HTTPException;
 
 public class AJAXModule implements PTModule {
+	private HTTPRequest request;
+	
+	private boolean secureConnection;
+	
+	public void setRequest(HTTPRequest request) {
+		this.request = request;
+	}
 
 	public HTTPResponse getResponse() {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 	public void handleRequest() throws HTTPException {
-		// TODO Auto-generated method stub
-
 	}
 
-		
-		/**
-		 */
-		public AJAXModule(PTConfiguration configuration, HTTPRequest request){
-		}
+	public void setSecureConnection(boolean isSecure) {
+	}
 
 }

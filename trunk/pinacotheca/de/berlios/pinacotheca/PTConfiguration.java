@@ -1,84 +1,34 @@
-
 package de.berlios.pinacotheca;
 
+import java.io.File;
+
 public class PTConfiguration {
+	private final static PTConfiguration instance = new PTConfiguration();
 
-	/**
-	 * @uml.property name="serverRoot"
-	 */
-	private String serverRoot = "null";
+	private File serverRoot = null;
 
-	/**
-	 * Getter of the property <tt>serverRoot</tt>
-	 * 
-	 * @return Returns the serverRoot.
-	 * @uml.property name="serverRoot"
-	 */
-	public String getServerRoot() {
-		return serverRoot;
-	}
+	private Short serverPort;
 
-	/**
-	 * Setter of the property <tt>serverRoot</tt>
-	 * 
-	 * @param serverRoot
-	 *            The serverRoot to set.
-	 * @uml.property name="serverRoot"
-	 */
-	public void setServerRoot(String serverRoot) {
-		this.serverRoot = serverRoot;
-	}
-
-	/**
-	 * @uml.property name="serverPort"
-	 */
-	private java.lang.Short serverPort;
-
-	/**
-	 * Getter of the property <tt>port</tt>
-	 * 
-	 * @return Returns the port.
-	 * @uml.property name="serverPort"
-	 */
-	public java.lang.Short getServerPort() {
-		return serverPort;
-	}
-
-	/**
-	 * Setter of the property <tt>port</tt>
-	 * 
-	 * @param port
-	 *            The port to set.
-	 * @uml.property name="serverPort"
-	 */
-	public void setServerPort(java.lang.Short serverPort) {
-		this.serverPort = serverPort;
-	}
-
-	/**
-	 * @uml.property name="serverSSLPort"
-	 */
 	private Short serverSSLPort;
 
-	/**
-	 * Getter of the property <tt>serverSSLPort</tt>
-	 * 
-	 * @return Returns the serverSSLPort.
-	 * @uml.property name="serverSSLPort"
-	 */
-	public Short getServerSSLPort() {
-		return serverSSLPort;
+	private PTConfiguration() {
 	}
 
-	/**
-	 * Setter of the property <tt>serverSSLPort</tt>
-	 * 
-	 * @param serverSSLPort
-	 *            The serverSSLPort to set.
-	 * @uml.property name="serverSSLPort"
-	 */
-	public void setServerSSLPort(Short serverSSLPort) {
-		this.serverSSLPort = serverSSLPort;
+	public static void init(File serverRoot, Short serverPort, Short serverSSLPort) {
+		instance.serverRoot = serverRoot;
+		instance.serverPort = serverPort;
+		instance.serverSSLPort = serverSSLPort;
 	}
 
+	public static File getServerRoot() {
+		return instance.serverRoot;
+	}
+
+	public static Short getServerPort() {
+		return instance.serverPort;
+	}
+
+	public static Short getServerSSLPort() {
+		return instance.serverSSLPort;
+	}
 }
