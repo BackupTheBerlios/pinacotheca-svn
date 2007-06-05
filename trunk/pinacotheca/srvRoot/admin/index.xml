@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<?xml-stylesheet type="text/xsl" href="/admin/template/index.xsl" ?>
+<albumlist>
+	<album id="1">
+		<title>Example</title>
+		<description>This is the first example.</description>
+	</album>
+	<album id="2">
+		<title>Another Example</title>
+		<description>The album with the title "Another Example" is the second one.</description>
+	</album>
+</albumlist>
