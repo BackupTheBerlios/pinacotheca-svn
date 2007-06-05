@@ -9,6 +9,7 @@ public class HTTPRequestBuilder {
 	
 	private final static String[] REQUESTS_SUPPORTED = { "HEAD", "GET", "POST" }; 
 	private final static String[] VERSIONS_SUPPORTED = { "1.0", "1.1" };
+	private final static String[] PARAMETER_HEADERS = { "Content-Disposition", "Content-Type" }; 
 	private HTTPMessage message;
 	
 	public HTTPRequestBuilder(String messageStart) throws HTTPException {
@@ -65,14 +66,23 @@ public class HTTPRequestBuilder {
 	public void parseHeaderLine(String header) throws HTTPException {
 		int delim;
 		String fieldName, fieldValue;
+		HTTPMessageHeaderValue headerValue;
 		
 		delim = header.indexOf(':');
 		if(delim == -1) throw new HTTPBadRequestException();
 		fieldName = header.substring(0, delim).trim();
 		fieldValue = header.substring(delim + 1).trim();
-		message.setHeaderField(fieldName, fieldValue);
+		headerValue = (isParameterField(fieldName)) ? HTTPMessageHeaderValue.parseHeaderValue(fieldValue) : new HTTPMessageHeaderValue(fieldValue);
+		message.setHeaderField(fieldName, headerValue);
 	}
 
+
+	private boolean isParameterField(String fieldName) {
+		for(int i = 0; i < PARAMETER_HEADERS.length; i++) {
+			if(PARAMETER_HEADERS[i].equals(fieldName)) return true;
+		}
+		return false;
+	}
 
 	public HTTPMessage getMessage() {
 		return message;

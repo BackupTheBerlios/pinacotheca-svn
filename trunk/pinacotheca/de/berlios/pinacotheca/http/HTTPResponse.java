@@ -1,5 +1,7 @@
 package de.berlios.pinacotheca.http;
 
+import de.berlios.pinacotheca.http.exceptions.HTTPException;
+
 public class HTTPResponse extends HTTPMessage {
 
 	private Short responseCode = null;
@@ -10,7 +12,11 @@ public class HTTPResponse extends HTTPMessage {
 		this.responseCode = responseCode;
 		this.responseMessage = responseMessage;
 	}
-
+	
+	public void setHeaderField(String fieldName, String fieldValue) throws HTTPException {
+		super.setHeaderField(fieldName, HTTPMessageHeaderValue.parseHeaderValue(fieldValue));
+	}
+	
 	public Short getResponseCode() {
 		return responseCode;
 	}

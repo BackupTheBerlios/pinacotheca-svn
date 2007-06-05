@@ -6,7 +6,6 @@ import java.io.EOFException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.Socket;
-import java.util.ArrayList;
 import java.util.Set;
 
 import de.berlios.pinacotheca.PTDispatcher;
@@ -14,7 +13,7 @@ import de.berlios.pinacotheca.PTLogger;
 import de.berlios.pinacotheca.PTModule;
 import de.berlios.pinacotheca.http.exceptions.HTTPBadRequestException;
 import de.berlios.pinacotheca.http.exceptions.HTTPException;
-import de.berlios.pinacotheca.http.exceptions.HTTPRequestEntityTooLargeException;
+import de.berlios.pinacotheca.http.exceptions.HTTPServerErrorException;
 
 public class HTTPClientHandler implements Runnable {
 	private Socket clientSocket;
@@ -39,7 +38,8 @@ public class HTTPClientHandler implements Runnable {
 			while (!closeConnection) {
 				try {
 					clientRequest = readClientRequest();
-					if(clientRequest == null) continue; //ignore newlines at start
+					if (clientRequest == null)
+						continue; // ignore newlines at start
 					closeConnection = clientRequest.containsHeaderField("Connection")
 							&& clientRequest.getHeaderField("Connection").equals("close");
 					module = PTDispatcher.dispatch(clientRequest, isSecure);
@@ -48,9 +48,15 @@ public class HTTPClientHandler implements Runnable {
 				} catch (HTTPException e) {
 					serverResponse = e.getResponse();
 				}
-				closeConnection = (serverResponse.containsHeaderField("Connection")
-						&& serverResponse.getHeaderField("Connection").equals("close")) || closeConnection;
+				
+				if(serverResponse == null)
+					serverResponse = new HTTPServerErrorException().getResponse();
+				
+				closeConnection = (serverResponse.containsHeaderField("Connection") && serverResponse.getHeaderField("Connection").equals(
+						"close"))
+						|| closeConnection;
 				sendServerResponse(serverResponse);
+				
 				if (closeConnection)
 					break;
 			}
@@ -75,14 +81,15 @@ public class HTTPClientHandler implements Runnable {
 		byte[] buffer;
 		int bytesRead;
 
-		strBuffer = serverResponse.getHttpVersion() + " " + serverResponse.getResponseCode() + " " + serverResponse.getResponseMessage() + "\r\n";
+		strBuffer = serverResponse.getHttpVersion() + " " + serverResponse.getResponseCode() + " " + serverResponse.getResponseMessage()
+				+ "\r\n";
 		clientOutput.write(strBuffer.getBytes());
 
 		for (String headerFieldName : headerFieldNames) {
 			strBuffer = headerFieldName + ": " + serverResponse.getHeaderField(headerFieldName) + "\r\n";
 			clientOutput.write(strBuffer.getBytes());
 		}
-		
+
 		clientOutput.write("\r\n".getBytes());
 		clientOutput.flush();
 
@@ -99,56 +106,36 @@ public class HTTPClientHandler implements Runnable {
 
 	private HTTPRequest readClientRequest() throws IOException, HTTPException {
 		String msgHeaderLine = "";
-		HTTPRequestBuilder msgBuilder;
+		HTTPRequestBuilder requestBuilder;
 		HTTPMessage request = null;
+		HTTPLineReader reader = new HTTPLineReader(clientInput);
 
 		try {
-    		msgHeaderLine = readLine();
-    		if(msgHeaderLine.equals("\r\n")) return null; //ignore newlines at start
-    		msgBuilder = new HTTPRequestBuilder(msgHeaderLine);
-    
-    		for (;;) {
-    			msgHeaderLine = readLine();
-    			if (msgHeaderLine.equals("\r\n"))
-    				break;
-    			msgBuilder.parseHeaderLine(msgHeaderLine);
-    		}
-    
-    		request = msgBuilder.getMessage();
-    		if (!(request instanceof HTTPRequest))
-    			throw new HTTPBadRequestException();
-    		request.setPayloadStream(clientInput);
-		} catch(HTTPException e) {
+			msgHeaderLine = reader.readLine();
+			if (msgHeaderLine.equals("\r\n"))
+				return null; // ignore newlines at start
+			requestBuilder = new HTTPRequestBuilder(msgHeaderLine);
+
+			for (;;) {
+				msgHeaderLine = reader.readLine();
+				if (msgHeaderLine.equals("\r\n"))
+					break;
+				requestBuilder.parseHeaderLine(msgHeaderLine);
+			}
+
+			request = requestBuilder.getMessage();
+			if (!(request instanceof HTTPRequest))
+				throw new HTTPBadRequestException();
+			request.setPayloadStream(clientInput);
+		} catch (HTTPException e) {
 			// wait for request end, then throw exception again
-			while(!msgHeaderLine.equals("\r\n")) msgHeaderLine = readLine();
-			throw e;
+			try {
+				byte[] buf = new byte[4096];
+				while(clientInput.read(buf) != -1);
+			} catch(IOException iE) {
+				throw new HTTPServerErrorException();
+			}
 		}
 		return (HTTPRequest) request;
-	}
-
-	private String readLine() throws IOException, HTTPRequestEntityTooLargeException {
-		ArrayList<Byte> strBytes = new ArrayList<Byte>(1024);
-		byte cChar, pChar = '\0';
-
-		for (;;) {
-			if (strBytes.size() == 1024)
-				throw new HTTPRequestEntityTooLargeException();
-			cChar = clientInput.readByte();
-			strBytes.add(cChar);
-			if (pChar == '\r' && cChar == '\n')
-				break;
-			pChar = cChar;
-		}
-
-		return getString(strBytes);
-	}
-
-	private String getString(ArrayList<Byte> strBytes) {
-		byte[] buf = new byte[strBytes.size()];
-
-		for (int i = 0; i < buf.length; i++)
-			buf[i] = strBytes.get(i);
-
-		return new String(buf);
 	}
 }

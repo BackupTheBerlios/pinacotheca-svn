@@ -24,27 +24,24 @@ public class AlbumModule implements PTModule {
 	}
 
 	public void handleRequest() throws HTTPException {
-		String reqPath = request.getRequestURL().substring("/album".length());
+		String reqURL = request.getRequestURL().substring("/album".length());
 		
 		response = new HTTPResponse("HTTP/1.1", (short) 200, "OK");
 		
-		if(reqPath.equals("/")) {
+		if(reqURL.equals("/")) {
 			returnIndex();
-		} else if(reqPath.startsWith("/template/")) {
-			returnTemplate(reqPath.substring("/template/".length()));
-		} else if(reqPath.startsWith("/show/")) {
-			returnAlbum(reqPath.substring("/show/".length()));
-		} else if(reqPath.startsWith("/photo/")) {
-			returnPhoto(reqPath.substring("/photo/".length()));
+		} else if(reqURL.startsWith("/template/")) {
+			returnTemplate(reqURL.substring("/template/".length()));
+		} else if(reqURL.startsWith("/show/")) {
+			returnAlbum(reqURL.substring("/show/".length()));
+		} else if(reqURL.startsWith("/photo/")) {
+			returnPhoto(reqURL.substring("/photo/".length()));
 		} else {
 			throw new HTTPNotFoundException(request.getRequestURL());
 		}
 	}
 	
 	private void returnAlbum(String album) throws HTTPException {
-		int delim = album.indexOf("/");
-		if(delim == -1) throw new HTTPNotFoundException(request.getRequestURL());
-		album = album.substring(0, delim);
 		File albumFile = new File(PTConfiguration.getServerRoot(), "album/album_" + album + ".xml");
 		
 		assertReadable(albumFile);
@@ -66,7 +63,7 @@ public class AlbumModule implements PTModule {
 		if(!file.canRead()) throw new HTTPForbiddenException();
 	}
 	
-	private void returnImageFile(File file) throws HTTPServerErrorException {
+	private void returnImageFile(File file) throws HTTPException {
 		try {
     		response.setHeaderField("Content-Length", String.valueOf(file.length()));
     		response.setHeaderField("Content-Type", "image/jpeg");
@@ -77,7 +74,7 @@ public class AlbumModule implements PTModule {
 		}
 	}
 
-	private void returnXMLFile(File file) throws HTTPServerErrorException {
+	private void returnXMLFile(File file) throws HTTPException {
 		try {
     		response.setHeaderField("Content-Length", String.valueOf(file.length()));
     		response.setHeaderField("Content-Type", "text/xml");

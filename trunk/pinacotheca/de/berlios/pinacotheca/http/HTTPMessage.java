@@ -4,8 +4,10 @@ import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Set;
 
+import de.berlios.pinacotheca.http.exceptions.HTTPException;
+
 public abstract class HTTPMessage {
-	private HashMap<String, String> headerFields = new HashMap<String, String>();
+	private HashMap<String, HTTPMessageHeaderValue> headerFields = new HashMap<String, HTTPMessageHeaderValue>();
 
 	private String httpVersion = null;
 
@@ -15,11 +17,11 @@ public abstract class HTTPMessage {
 		return headerFields.containsKey(fieldName);
 	}
 
-	public String getHeaderField(String fieldName) {
+	public HTTPMessageHeaderValue getHeaderField(String fieldName) {
 		return headerFields.get(fieldName);
 	}
 
-	public void setHeaderField(String fieldName, String fieldValue) {
+	public void setHeaderField(String fieldName, HTTPMessageHeaderValue fieldValue) throws HTTPException {
 		headerFields.put(fieldName, fieldValue);
 	}
 
