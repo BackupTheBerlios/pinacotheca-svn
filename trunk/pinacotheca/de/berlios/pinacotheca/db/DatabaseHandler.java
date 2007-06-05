@@ -380,9 +380,21 @@ public class DatabaseHandler {
 	 * @param album
 	 * @throws DatabaseException
 	 */
-	public void addAlbum(AOAlbum album) throws DatabaseException {
+	public int addAlbum(AOAlbum album) throws DatabaseException {
 
-		String values = " VALUES (" + album.getId() + ", '" + album.getName()
+		ResultSet rs;
+		int newAid;
+		try {
+			rs = dbConnection.createStatement().executeQuery(
+					"SELECT MAX (aid) AS aid_max FROM Album");
+
+			newAid = 1 + rs.getInt("aid_max");
+
+		} catch (SQLException e) {
+			throw new DatabaseException(e.getMessage());
+		}
+		
+		String values = " VALUES (" + newAid + ", '" + album.getName()
 				+ "', '" + album.getDescription() + "')";
 
 		System.out.println("INSERT INTO album (aid, name, description)"
@@ -394,7 +406,7 @@ public class DatabaseHandler {
 		} catch (SQLException e) {
 			throw new DatabaseException(e.getMessage());
 		}
-
+		return newAid;
 	}
 
 	/**
