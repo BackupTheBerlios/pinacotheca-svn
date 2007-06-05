@@ -388,6 +388,7 @@ public class DatabaseHandler {
 			rs = dbConnection.createStatement().executeQuery(
 					"SELECT MAX (aid) AS aid_max FROM Album");
 
+			rs.next();
 			newAid = 1 + rs.getInt("aid_max");
 
 		} catch (SQLException e) {
@@ -423,6 +424,7 @@ public class DatabaseHandler {
 			rs = dbConnection.createStatement().executeQuery(
 					"SELECT MAX (pid) AS pid_max FROM Photo");
 
+			rs.next();
 			newPid = 1 + rs.getInt("pid_max");
 
 		} catch (SQLException e) {
@@ -465,9 +467,22 @@ public class DatabaseHandler {
 	 * @param tag
 	 * @throws DatabaseException
 	 */
-	public void addTag(AOTag tag) throws DatabaseException {
+	public int addTag(AOTag tag) throws DatabaseException {
 
-		String values = "VALUES (" + tag.getId() + ", '" + tag.getName() + "')";
+		ResultSet rs;
+		int newTid;
+		try {
+			rs = dbConnection.createStatement().executeQuery(
+					"SELECT MAX (tid) AS tid_max FROM tag");
+
+			rs.next();
+			newTid = 1 + rs.getInt("tid_max");
+
+		} catch (SQLException e) {
+			throw new DatabaseException(e.getMessage());
+		}
+		
+		String values = "VALUES (" + newTid + ", '" + tag.getName() + "')";
 
 		System.out.println("INSERT INTO tag (tid, name)" + values);
 
@@ -477,7 +492,7 @@ public class DatabaseHandler {
 		} catch (SQLException e) {
 			throw new DatabaseException(e.getMessage());
 		}
-
+		return newTid;
 	}
 
 	public void asignPhotoTag(AOPhoto photo, AOTag tag)
