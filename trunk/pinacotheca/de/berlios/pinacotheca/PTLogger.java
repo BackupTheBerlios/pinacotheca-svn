@@ -6,6 +6,11 @@ public class PTLogger {
 	private PTLogger() {
 	}
 	
+	/**
+	 * This method logs an error message to the default error logging stream.
+	 * 
+	 * @param errMsg
+	 */
 	public static void logError(String errMsg) {
 		instance.iLogErr(errMsg);
 	}
