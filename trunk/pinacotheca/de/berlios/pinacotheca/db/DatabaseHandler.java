@@ -455,7 +455,7 @@ public class DatabaseHandler {
 	 * @throws DatabaseException
 	 */
 	public void addPhotos(ArrayList<AOPhoto> list) throws DatabaseException {
-		// TODO: Noch verändern mit eigenen Query
+		// TODO: Noch verändern mit eigenen Query (Problem is ID)
 		for (AOPhoto photo : list) {
 			this.addPhoto(photo);
 		}
@@ -556,11 +556,35 @@ public class DatabaseHandler {
 
 	public void updateAlbum(AOAlbum album) throws DatabaseException {
 		try {
-
 			dbConnection.createStatement().executeUpdate(
 					"UPDATE album SET name = " + album.getName()
 							+ ", description = " + album.getDescription()
 							+ " WHERE aid = " + album.getId());
+
+		} catch (SQLException e) {
+			throw new DatabaseException(e.getMessage());
+		}
+	}
+	
+	public void updatePhoto (AOPhoto photo) throws DatabaseException{
+		try {
+			dbConnection.createStatement().executeUpdate(
+					"UPDATE album SET aid = " + photo.getAlbumId()
+							+ ", origFileName = " + photo.getOrigFileName()
+							+ ", description = " + photo.getDescription()
+							+ ", metadata = " + photo.getMetadata()
+							+ " WHERE aid = " + photo.getId());
+
+		} catch (SQLException e) {
+			throw new DatabaseException(e.getMessage());
+		}
+	}
+	
+	public void updateTag(AOTag tag) throws DatabaseException {
+		try {
+			dbConnection.createStatement().executeUpdate(
+					"UPDATE album SET name = " + tag.getName()
+							+ " WHERE aid = " + tag.getId());
 
 		} catch (SQLException e) {
 			throw new DatabaseException(e.getMessage());
