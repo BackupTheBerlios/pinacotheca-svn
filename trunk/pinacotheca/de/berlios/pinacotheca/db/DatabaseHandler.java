@@ -569,11 +569,11 @@ public class DatabaseHandler {
 	public void updatePhoto (AOPhoto photo) throws DatabaseException{
 		try {
 			dbConnection.createStatement().executeUpdate(
-					"UPDATE album SET aid = " + photo.getAlbumId()
-							+ ", origFileName = " + photo.getOrigFileName()
+					"UPDATE album SET origFileName = " + photo.getOrigFileName()
 							+ ", description = " + photo.getDescription()
 							+ ", metadata = " + photo.getMetadata()
-							+ " WHERE aid = " + photo.getId());
+							+ " WHERE pid = " + photo.getId()
+							+ " AND aid = " + photo.getAlbumId());
 
 		} catch (SQLException e) {
 			throw new DatabaseException(e.getMessage());
