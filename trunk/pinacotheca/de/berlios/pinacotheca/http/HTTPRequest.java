@@ -39,7 +39,7 @@ public class HTTPRequest extends HTTPMessage {
 		if (!containsHeaderField("Content-Type"))
 			return false;
 
-		return getHeaderField("Content-Type").equals("application/x-www-form-urlencode");
+		return getHeaderField("Content-Type").getToken().equals("application/x-www-form-urlencoded");
 	}
 
 	public HashMap<String, String> getPostVars() throws HTTPException {

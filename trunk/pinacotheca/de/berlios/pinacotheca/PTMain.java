@@ -16,15 +16,14 @@ public class PTMain {
 		Thread serverThread;
 		Thread sslServerThread;
 		
-		initConfiguration(args);
-		server = new HTTPServer();
-		sslServer = new HTTPSSLServer();
-		serverThread = new Thread(server);
-		sslServerThread = new Thread(sslServer);
-		serverThread.start();
-		sslServerThread.start();
-		
 		try {
+    		initConfiguration(args);
+    		server = new HTTPServer();
+    		sslServer = new HTTPSSLServer();
+    		serverThread = new Thread(server);
+    		sslServerThread = new Thread(sslServer);
+    		serverThread.start();
+    		sslServerThread.start();
 			serverThread.join();
 			sslServerThread.join();
 		} catch (InterruptedException e) {

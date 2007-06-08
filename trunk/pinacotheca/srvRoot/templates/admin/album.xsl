@@ -21,7 +21,7 @@
     </form>
     <form method="POST" enctype="multipart/form-data">
     <xsl:attribute name="action">
-    	/admin/album/add/<xsl:value-of select="id"/>
+    	/admin/photo/add/<xsl:value-of select="id"/>
     </xsl:attribute>
     <fieldset>
     <legend>Add Photo to Album</legend>
@@ -37,10 +37,16 @@
     	<div class="photothumbnail">
     	<img>
     	<xsl:attribute name="src">
-    		/album/photo/thumb/<xsl:value-of select="@id"/>
+    		/album/photo/<xsl:value-of select="@id"/>
     	</xsl:attribute>
     	</img>
     	<p class="phototitle"><xsl:value-of select="@title"/></p>
+    	<p><a class="photoedit"><xsl:attribute name="href">
+    		/admin/photo/edit/<xsl:value-of select="@id"/>
+    		</xsl:attribute>Edit</a> |
+    		<a class="photodelete"><xsl:attribute name="href">
+    		/admin/photo/delete/<xsl:value-of select="@id"/>
+    		</xsl:attribute>Delete</a></p>
     	</div>
     	</div>
     </xsl:for-each>

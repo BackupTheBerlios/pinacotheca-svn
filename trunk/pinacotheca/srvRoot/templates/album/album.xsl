@@ -13,7 +13,7 @@
     	<div class="photothumbnail">
     	<img>
     	<xsl:attribute name="src">
-    		/album/photo/thumb/<xsl:value-of select="@id"/>
+    		/album/photo/<xsl:value-of select="@id"/>
     	</xsl:attribute>
     	</img>
     	<p class="phototitle"><xsl:value-of select="@title"/></p>

@@ -7,7 +7,7 @@
 </head>
 <body>
 	<h1>Album List</h1>
-	<p><a class="addalbum" href="/admin/album/add/">Create new Album></a></p>
+	<p><a class="addalbum" href="/admin/album/add/">Create new Album</a></p>
 	<xsl:for-each select="albumlist/album">
 	<div class="album">
 		<h2><xsl:value-of select="title"/></h2>

@@ -11,10 +11,12 @@ import de.berlios.pinacotheca.PTConfiguration;
 
 public class DatabaseHandler {
 
-	private static Connection dbConnection;
+	private Connection dbConnection;
+	
+	private static DatabaseHandler instance;
 
-	public DatabaseHandler() {
-
+	private DatabaseHandler() throws DatabaseException {
+		init();
 	}
 
 	/**
@@ -23,7 +25,7 @@ public class DatabaseHandler {
 	 * 
 	 * @throws DatabaseException
 	 */
-	public static void init() throws DatabaseException {
+	private void init() throws DatabaseException {
 
 		File dbDir = new File(PTConfiguration.getServerRoot(), "db");
 		File testFile = new File(dbDir, "pinacothecaDB");
@@ -85,6 +87,9 @@ public class DatabaseHandler {
 								+ "pid INTEGER REFERENCES photo,"
 								+ "tid INTEGER REFERENCES tag,"
 								+ "PRIMARY KEY (pid, tid) )");
+				
+				
+				dbConnection.commit();
 			}
 
 		} catch (ClassNotFoundException e) {
@@ -130,7 +135,7 @@ public class DatabaseHandler {
 		try {
 			rs = dbConnection.createStatement()
 					.executeQuery(
-							"SELECT aid, name, discription FROM album WHERE id = "
+							"SELECT aid, name, description FROM album WHERE aid = "
 									+ id);
 			while (rs.next()) {
 				album = buildAlbumAO(rs);
@@ -386,7 +391,7 @@ public class DatabaseHandler {
 		int newAid;
 		try {
 			rs = dbConnection.createStatement().executeQuery(
-					"SELECT MAX (aid) AS aid_max FROM Album");
+					"SELECT MAX (aid) AS aid_max FROM album");
 
 			rs.next();
 			newAid = 1 + rs.getInt("aid_max");
@@ -455,7 +460,7 @@ public class DatabaseHandler {
 	 * @throws DatabaseException
 	 */
 	public void addPhotos(ArrayList<AOPhoto> list) throws DatabaseException {
-		// TODO: Noch verändern mit eigenen Query (Problem is ID)
+		// TODO: Noch verï¿½ndern mit eigenen Query (Problem is ID)
 		for (AOPhoto photo : list) {
 			this.addPhoto(photo);
 		}
@@ -597,5 +602,11 @@ public class DatabaseHandler {
 		} catch (SQLException e) {
 			throw new DatabaseException(e.getMessage());
 		}
+	}
+
+	public static DatabaseHandler getInstance() throws DatabaseException {
+		if(instance == null)
+			instance = new DatabaseHandler();
+		return instance;
 	}
 }
