@@ -10,14 +10,20 @@ public class PTConfiguration {
 	private Short serverPort;
 
 	private Short serverSSLPort;
+	
+	private String adminUser;
+	
+	private String adminPass;
 
 	private PTConfiguration() {
 	}
 
-	public static void init(File serverRoot, Short serverPort, Short serverSSLPort) {
+	public static void init(File serverRoot, Short serverPort, Short serverSSLPort, String adminUser, String adminPass) {
 		instance.serverRoot = serverRoot;
 		instance.serverPort = serverPort;
 		instance.serverSSLPort = serverSSLPort;
+		instance.adminPass = adminPass;
+		instance.adminUser = adminUser;
 	}
 
 	public static File getServerRoot() {
@@ -30,5 +36,13 @@ public class PTConfiguration {
 
 	public static Short getServerSSLPort() {
 		return instance.serverSSLPort;
+	}
+
+	public static String getAdminPass() {
+		return instance.adminPass;
+	}
+
+	public static String getAdminUser() {
+		return instance.adminUser;
 	}
 }

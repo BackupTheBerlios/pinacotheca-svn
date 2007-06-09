@@ -12,7 +12,7 @@ import de.berlios.pinacotheca.PTConfiguration;
 public class DatabaseHandler {
 
 	private Connection dbConnection;
-	
+
 	private static DatabaseHandler instance;
 
 	private DatabaseHandler() throws DatabaseException {
@@ -32,15 +32,12 @@ public class DatabaseHandler {
 
 		boolean createTables = !testFile.isDirectory();
 
-		System.out.println(createTables);
-
 		System.setProperty("derby.system.home", dbDir.getPath());
 
 		try {
 			Class.forName("org.apache.derby.jdbc.EmbeddedDriver");
 
-			dbConnection = DriverManager
-					.getConnection("jdbc:derby:pinacothecaDB;create=true");
+			dbConnection = DriverManager.getConnection("jdbc:derby:pinacothecaDB;create=true");
 
 			dbConnection.setAutoCommit(false);
 
@@ -49,46 +46,32 @@ public class DatabaseHandler {
 			 */
 			if (createTables) {
 
-				System.out.println("create Table");
-
 				/**
 				 * create table album
 				 */
 				dbConnection.createStatement().executeUpdate(
-						"CREATE TABLE " + "album" + " ("
-								+ "aid INTEGER PRIMARY KEY,"
-								+ "name VARCHAR(50),"
-								+ "description VARCHAR(100) )");
+						"CREATE TABLE " + "album" + " (" + "aid INTEGER PRIMARY KEY," + "name VARCHAR(50)," + "description VARCHAR(100) )");
 
 				/**
 				 * create table photo
 				 */
 				dbConnection.createStatement().executeUpdate(
-						"CREATE TABLE " + "photo" + " ("
-								+ "pid INTEGER PRIMARY KEY,"
-								+ "aid INTEGER REFERENCES album(aid),"
-								+ "origFileName VARCHAR(50),"
-								+ "description VARCHAR(100),"
-								+ "metadata VARCHAR(1024) )");
+						"CREATE TABLE " + "photo" + " (" + "pid INTEGER PRIMARY KEY," + "aid INTEGER REFERENCES album(aid),"
+								+ "origFileName VARCHAR(50)," + "description VARCHAR(100)," + "metadata LONG VARCHAR )");
 
 				/**
 				 * create table tag
 				 */
 				dbConnection.createStatement().executeUpdate(
-						"CREATE TABLE " + "tag" + " ("
-								+ "tid INTEGER PRIMARY KEY,"
-								+ "name VARCHAR(50) )");
+						"CREATE TABLE " + "tag" + " (" + "tid INTEGER PRIMARY KEY," + "name VARCHAR(50) )");
 
 				/**
 				 * create table photo_tag
 				 */
 				dbConnection.createStatement().executeUpdate(
-						"CREATE TABLE " + "photo_tag" + " ("
-								+ "pid INTEGER REFERENCES photo,"
-								+ "tid INTEGER REFERENCES tag,"
+						"CREATE TABLE " + "photo_tag" + " (" + "pid INTEGER REFERENCES photo," + "tid INTEGER REFERENCES tag,"
 								+ "PRIMARY KEY (pid, tid) )");
-				
-				
+
 				dbConnection.commit();
 			}
 
@@ -133,10 +116,7 @@ public class DatabaseHandler {
 
 		ResultSet rs;
 		try {
-			rs = dbConnection.createStatement()
-					.executeQuery(
-							"SELECT aid, name, description FROM album WHERE aid = "
-									+ id);
+			rs = dbConnection.createStatement().executeQuery("SELECT aid, name, description FROM album WHERE aid = " + id);
 			while (rs.next()) {
 				album = buildAlbumAO(rs);
 			}
@@ -159,8 +139,7 @@ public class DatabaseHandler {
 		ArrayList<AOAlbum> list = new ArrayList<AOAlbum>();
 
 		try {
-			rs = dbConnection.createStatement().executeQuery(
-					"SELECT * FROM album");
+			rs = dbConnection.createStatement().executeQuery("SELECT * FROM album");
 
 			while (rs.next()) {
 				AOAlbum album = buildAlbumAO(rs);
@@ -211,8 +190,7 @@ public class DatabaseHandler {
 
 		try {
 			rs = dbConnection.createStatement().executeQuery(
-					"SELECT pid, aid, origFilename, description, metadata"
-							+ " FROM photo WHERE pid = " + id);
+					"SELECT pid, aid, origFilename, description, metadata" + " FROM photo WHERE pid = " + id);
 
 			if (rs.next()) {
 				photo = buildPhotoAO(rs);
@@ -239,8 +217,7 @@ public class DatabaseHandler {
 
 		try {
 			rs = dbConnection.createStatement().executeQuery(
-					"SELECT pid, aid, origFilename, description, metadata "
-							+ "FROM photo WHERE aid = " + aid);
+					"SELECT pid, aid, origFilename, description, metadata " + "FROM photo WHERE aid = " + aid);
 
 			while (rs.next()) {
 				AOPhoto photo = buildPhotoAO(rs);
@@ -262,22 +239,21 @@ public class DatabaseHandler {
 	 * @return
 	 * @throws DatabaseException
 	 */
-	public ArrayList<AOPhoto> getNextPhotos(AOPhoto photo, short num)
-			throws DatabaseException {
+	public ArrayList<AOPhoto> getNextPhotos(AOPhoto photo, short num) throws DatabaseException {
 
 		ResultSet rs;
 		ArrayList<AOPhoto> list = new ArrayList<AOPhoto>();
 
 		int aid = photo.getAlbumId();
 		int pid = photo.getId();
+		int cnt = 0;
 
 		try {
 			rs = dbConnection.createStatement().executeQuery(
-					"SELECT pid, aid, origFilename, description, metadata"
-							+ " FROM photo WHERE aid = " + aid + " AND pid > "
-							+ pid + " ORDER BY pid ASC LIMIT 0," + num);
+					"SELECT pid, aid, origFilename, description, metadata" + " FROM photo WHERE aid = " + aid + " AND pid > " + pid
+							+ " ORDER BY pid ASC");
 
-			while (rs.next()) {
+			while (rs.next() && cnt++ < num) {
 
 				int id = rs.getInt(1);
 				AOPhoto lPhoto = getPhoto(id);
@@ -299,22 +275,21 @@ public class DatabaseHandler {
 	 * @return
 	 * @throws DatabaseException
 	 */
-	public ArrayList<AOPhoto> getPreviousPhotos(AOPhoto photo, short num)
-			throws DatabaseException {
+	public ArrayList<AOPhoto> getPreviousPhotos(AOPhoto photo, short num) throws DatabaseException {
 
 		ResultSet rs;
 		ArrayList<AOPhoto> list = new ArrayList<AOPhoto>();
 
 		int aid = photo.getAlbumId();
 		int pid = photo.getId();
+		int cnt = 0;
 
 		try {
 			rs = dbConnection.createStatement().executeQuery(
-					"SELECT pid, aid, origFilename, description, metadata"
-							+ " FROM photo WHERE aid = " + aid + " AND pid < "
-							+ pid + " ORDER BY pid DESC LIMIT 0," + num);
+					"SELECT pid, aid, origFilename, description, metadata" + " FROM photo WHERE aid = " + aid + " AND pid < " + pid
+							+ " ORDER BY pid DESC");
 
-			while (rs.next()) {
+			while (rs.next() && cnt++ < num) {
 
 				int id = rs.getInt(1);
 				AOPhoto lPhoto = getPhoto(id);
@@ -362,9 +337,7 @@ public class DatabaseHandler {
 
 		try {
 			rs = dbConnection.createStatement().executeQuery(
-					"SELECT tag.tid, tag.name FROM tag "
-							+ "INNER JOIN photo_tag "
-							+ "ON tag.tid = photo_tag.tid "
+					"SELECT tag.tid, tag.name FROM tag " + "INNER JOIN photo_tag " + "ON tag.tid = photo_tag.tid "
 							+ "WHERE photo_tag.pid = " + pid);
 
 			while (rs.next()) {
@@ -390,8 +363,7 @@ public class DatabaseHandler {
 		ResultSet rs;
 		int newAid;
 		try {
-			rs = dbConnection.createStatement().executeQuery(
-					"SELECT MAX (aid) AS aid_max FROM album");
+			rs = dbConnection.createStatement().executeQuery("SELECT MAX (aid) AS aid_max FROM album");
 
 			rs.next();
 			newAid = 1 + rs.getInt("aid_max");
@@ -399,16 +371,11 @@ public class DatabaseHandler {
 		} catch (SQLException e) {
 			throw new DatabaseException(e.getMessage());
 		}
-		
-		String values = " VALUES (" + newAid + ", '" + album.getName()
-				+ "', '" + album.getDescription() + "')";
 
-		System.out.println("INSERT INTO album (aid, name, description)"
-				+ values);
+		String values = " VALUES (" + newAid + ", '" + album.getName() + "', '" + album.getDescription() + "')";
 
 		try {
-			dbConnection.createStatement().executeUpdate(
-					"INSERT INTO album (aid, name, description)" + values);
+			dbConnection.createStatement().executeUpdate("INSERT INTO album (aid, name, description)" + values);
 		} catch (SQLException e) {
 			throw new DatabaseException(e.getMessage());
 		}
@@ -426,8 +393,7 @@ public class DatabaseHandler {
 		ResultSet rs;
 		int newPid;
 		try {
-			rs = dbConnection.createStatement().executeQuery(
-					"SELECT MAX (pid) AS pid_max FROM Photo");
+			rs = dbConnection.createStatement().executeQuery("SELECT MAX (pid) AS pid_max FROM Photo");
 
 			rs.next();
 			newPid = 1 + rs.getInt("pid_max");
@@ -436,17 +402,11 @@ public class DatabaseHandler {
 			throw new DatabaseException(e.getMessage());
 		}
 
-		String values = "VALUES (" + newPid + "," + photo.getAlbumId() + ", '"
-				+ photo.getOrigFileName() + "', '" + photo.getDescription()
+		String values = "VALUES (" + newPid + "," + photo.getAlbumId() + ", '" + photo.getOrigFileName() + "', '" + photo.getDescription()
 				+ "', '" + photo.getMetadata() + "')";
 
-		System.out.println("INSERT INTO photo (pid, aid, origFileName, "
-				+ "description, metadata)" + values);
-
 		try {
-			dbConnection.createStatement().executeUpdate(
-					"INSERT INTO photo (pid, aid, origFileName, "
-							+ "description, metadata)" + values);
+			dbConnection.createStatement().executeUpdate("INSERT INTO photo (pid, aid, origFileName, " + "description, metadata)" + values);
 		} catch (SQLException e) {
 			throw new DatabaseException(e.getMessage());
 		}
@@ -477,8 +437,7 @@ public class DatabaseHandler {
 		ResultSet rs;
 		int newTid;
 		try {
-			rs = dbConnection.createStatement().executeQuery(
-					"SELECT MAX (tid) AS tid_max FROM tag");
+			rs = dbConnection.createStatement().executeQuery("SELECT MAX (tid) AS tid_max FROM tag");
 
 			rs.next();
 			newTid = 1 + rs.getInt("tid_max");
@@ -486,30 +445,23 @@ public class DatabaseHandler {
 		} catch (SQLException e) {
 			throw new DatabaseException(e.getMessage());
 		}
-		
+
 		String values = "VALUES (" + newTid + ", '" + tag.getName() + "')";
 
-		System.out.println("INSERT INTO tag (tid, name)" + values);
-
 		try {
-			dbConnection.createStatement().executeUpdate(
-					"INSERT INTO tag (tid, name)" + values);
+			dbConnection.createStatement().executeUpdate("INSERT INTO tag (tid, name)" + values);
 		} catch (SQLException e) {
 			throw new DatabaseException(e.getMessage());
 		}
 		return newTid;
 	}
 
-	public void asignPhotoTag(AOPhoto photo, AOTag tag)
-			throws DatabaseException {
+	public void asignPhotoTag(AOPhoto photo, AOTag tag) throws DatabaseException {
 
 		String values = "VALUES (" + photo.getId() + "," + tag.getId() + ")";
 
-		System.out.println("INSERT INTO photo_tag (pid, tid)" + values);
-
 		try {
-			dbConnection.createStatement().executeUpdate(
-					"INSERT INTO photo_tag (pid, tid)" + values);
+			dbConnection.createStatement().executeUpdate("INSERT INTO photo_tag (pid, tid)" + values);
 		} catch (SQLException e) {
 			throw new DatabaseException(e.getMessage());
 		}
@@ -519,14 +471,11 @@ public class DatabaseHandler {
 
 		try {
 			dbConnection.createStatement().executeUpdate(
-					"DELETE FROM photo_tag WHERE pid IN (SELECT pid FROM photo where aid = "
-							+ album.getId() + ")");
+					"DELETE FROM photo_tag WHERE pid IN (SELECT pid FROM photo where aid = " + album.getId() + ")");
 
-			dbConnection.createStatement().executeUpdate(
-					"DELETE FROM photo WHERE aid = " + album.getId());
+			dbConnection.createStatement().executeUpdate("DELETE FROM photo WHERE aid = " + album.getId());
 
-			dbConnection.createStatement().executeUpdate(
-					"DELETE FROM album WHERE aid = " + album.getId());
+			dbConnection.createStatement().executeUpdate("DELETE FROM album WHERE aid = " + album.getId());
 
 		} catch (SQLException e) {
 			throw new DatabaseException(e.getMessage());
@@ -537,11 +486,9 @@ public class DatabaseHandler {
 	public void deletePhoto(AOPhoto photo) throws DatabaseException {
 
 		try {
-			dbConnection.createStatement().executeUpdate(
-					"DELETE FROM photo_tag WHERE pid = " + photo.getId());
+			dbConnection.createStatement().executeUpdate("DELETE FROM photo_tag WHERE pid = " + photo.getId());
 
-			dbConnection.createStatement().executeUpdate(
-					"DELETE FROM photo WHERE aid = " + photo.getId());
+			dbConnection.createStatement().executeUpdate("DELETE FROM photo WHERE pid = " + photo.getId());
 
 		} catch (SQLException e) {
 			throw new DatabaseException(e.getMessage());
@@ -551,8 +498,7 @@ public class DatabaseHandler {
 	public void deleteTag(AOTag tag) throws DatabaseException {
 		try {
 
-			dbConnection.createStatement().executeUpdate(
-					"DELETE FROM tag WHERE aid = " + tag.getId());
+			dbConnection.createStatement().executeUpdate("DELETE FROM tag WHERE tid = " + tag.getId());
 
 		} catch (SQLException e) {
 			throw new DatabaseException(e.getMessage());
@@ -562,34 +508,29 @@ public class DatabaseHandler {
 	public void updateAlbum(AOAlbum album) throws DatabaseException {
 		try {
 			dbConnection.createStatement().executeUpdate(
-					"UPDATE album SET name = " + album.getName()
-							+ ", description = " + album.getDescription()
-							+ " WHERE aid = " + album.getId());
+					"UPDATE album SET name = '" + album.getName() + "', description = '" + album.getDescription() + "' WHERE aid = "
+							+ album.getId());
 
 		} catch (SQLException e) {
 			throw new DatabaseException(e.getMessage());
 		}
 	}
-	
-	public void updatePhoto (AOPhoto photo) throws DatabaseException{
+
+	public void updatePhoto(AOPhoto photo) throws DatabaseException {
 		try {
 			dbConnection.createStatement().executeUpdate(
-					"UPDATE album SET origFileName = " + photo.getOrigFileName()
-							+ ", description = " + photo.getDescription()
-							+ ", metadata = " + photo.getMetadata()
-							+ " WHERE pid = " + photo.getId()
-							+ " AND aid = " + photo.getAlbumId());
+					"UPDATE photo SET origFileName = '" + photo.getOrigFileName() + "', description = '" + photo.getDescription()
+							+ "', metadata = '" + photo.getMetadata() + "' WHERE pid = " + photo.getId() + " AND aid = "
+							+ photo.getAlbumId());
 
 		} catch (SQLException e) {
 			throw new DatabaseException(e.getMessage());
 		}
 	}
-	
+
 	public void updateTag(AOTag tag) throws DatabaseException {
 		try {
-			dbConnection.createStatement().executeUpdate(
-					"UPDATE album SET name = " + tag.getName()
-							+ " WHERE aid = " + tag.getId());
+			dbConnection.createStatement().executeUpdate("UPDATE tag SET name = '" + tag.getName() + "' WHERE tid = " + tag.getId());
 
 		} catch (SQLException e) {
 			throw new DatabaseException(e.getMessage());
@@ -605,8 +546,38 @@ public class DatabaseHandler {
 	}
 
 	public static DatabaseHandler getInstance() throws DatabaseException {
-		if(instance == null)
+		if (instance == null)
 			instance = new DatabaseHandler();
 		return instance;
+	}
+
+	public ArrayList<AOTag> getTags() throws DatabaseException {
+		ArrayList<AOTag> list = new ArrayList<AOTag>();
+		try {
+			ResultSet rs = dbConnection.createStatement().executeQuery("SELECT tid, name FROM tag");
+			while (rs.next()) {
+
+				AOTag tag = buildTagAO(rs);
+				list.add(tag);
+			}
+			rs.close();
+		} catch (SQLException e) {
+			throw new DatabaseException(e.getMessage());
+		}
+		return list;
+	}
+
+	public AOTag getTag(int tagId) throws DatabaseException {
+		AOTag tag = null;
+		try {
+			ResultSet rs = dbConnection.createStatement().executeQuery("SELECT tid, name FROM tag WHERE tid=" + tagId);
+			if (rs.next()) {
+				tag = buildTagAO(rs);
+			}
+			rs.close();
+		} catch (SQLException e) {
+			throw new DatabaseException(e.getMessage());
+		}
+		return tag;
 	}
 }

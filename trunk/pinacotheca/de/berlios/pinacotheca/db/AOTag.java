@@ -10,6 +10,9 @@ public class AOTag {
 		
 	}
 
+	public AOTag() {
+	}
+
 	/**
 	 * @uml.property  name="id"
 	 */

@@ -7,10 +7,9 @@
 </head>
 <body>
 	<h1>Album List</h1>
-	<p><a class="addalbum" href="/admin/album/add/">Create new Album</a></p>
 	<xsl:for-each select="albumlist/album">
 	<div class="album">
-		<h2><xsl:value-of select="title"/></h2>
+		<h2><xsl:value-of select="name"/></h2>
 		<p><a class="albumedit"><xsl:attribute name="href">
 				/admin/album/edit/<xsl:value-of select="@id"/>
 			</xsl:attribute>Edit</a> | 
@@ -19,6 +18,18 @@
 			</xsl:attribute>Delete</a></p>
 	</div>
 	</xsl:for-each>
+	<h1>Actions</h1>
+	<p><a class="tags" href="/admin/tags/">Edit Tags</a></p>
+    <form action="/admin/album/add/" method="POST">
+    <fieldset>
+    <legend>Add an Album</legend>
+    <p><label for="albumname">Name:</label><br/>
+    <input type="text" id="albumname" name="albumname"/></p>
+    <p><label for="albumdescription">Description</label><br/>
+    <textarea rows="10" cols="50" id="albumdescription" name="albumdescription"></textarea></p>
+    <p><button type="submit">Add</button></p>
+    </fieldset>
+    </form>
 </body>
 </html>
 </xsl:template>

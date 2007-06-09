@@ -32,7 +32,7 @@ public class PTMain {
 	}
 
 	private static void initConfiguration(String[] args) {
-		String configFileName;
+		String configFileName, adminUser, adminPass;
 		File configFile, serverRoot;
 		FileInputStream configInputStream = null;
 		Properties props;
@@ -74,7 +74,16 @@ public class PTMain {
 		if(!serverRoot.isDirectory())
 			exitError("Invalid pt.serverRoot specified.");
 		
-		PTConfiguration.init(serverRoot, serverPort, serverSSLPort);
+		if(!props.containsKey("pt.adminUser"))
+			exitError("Configuration file does not contain pt.adminUser entry.");
+		
+		if(!props.containsKey("pt.adminPass"))
+			exitError("Configuration file does not contain pt.adminPass entry.");
+		
+		adminUser = props.getProperty("pt.adminUser");
+		adminPass = props.getProperty("pt.adminPass");
+		
+		PTConfiguration.init(serverRoot, serverPort, serverSSLPort, adminUser, adminPass);
 		
 		try {
 			configInputStream.close();

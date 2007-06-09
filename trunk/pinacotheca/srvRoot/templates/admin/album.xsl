@@ -3,20 +3,26 @@
 <xsl:template match="/album">
 <html>
 <head>
-<title><xsl:value-of select="title"/></title>
+	<title>Edit Album: <xsl:value-of select="name"/></title>
+	<link rel="stylesheet" type="text/css" href="/admin/stylesheet"/>
 </head>
 <body>
+	<h1>Edit Album: <xsl:value-of select="name"/></h1>
 	<form method="POST">
 	<xsl:attribute name="action">
 		/admin/album/edit/<xsl:value-of select="id"/>
 	</xsl:attribute>
 	<fieldset>
 	<legend>Edit Album</legend>
-    <p><label for="albumtitle">Album Title:</label><br/>
-    <input id="albumtitle" name="albumtitle"><xsl:value-of select="title"/></input></p>
+    <p><label for="albumname">Album Title:</label><br/>
+    <input id="albumname" name="albumname"><xsl:attribute name="value">
+    	<xsl:value-of select="name"/>
+    	</xsl:attribute></input></p>
     <p><label for="albumdescription">Album Description:</label><br/>
-    <input id="albumdescription" name="albumdescription"><xsl:value-of select="description"/></input></p>
-    <button type="submit">Save Changes</button>
+    <input id="albumdescription" name="albumdescription"><xsl:attribute name="value">
+    	<xsl:value-of select="description"/>
+    	</xsl:attribute></input></p>
+    <p><button type="submit">Save Changes</button></p>
     </fieldset>
     </form>
     <form method="POST" enctype="multipart/form-data">
@@ -35,7 +41,7 @@
     <xsl:for-each select="photolist/photo">
     	<div class="photo">
     	<div class="photothumbnail">
-    	<img>
+    	<img class="photothumbnail">
     	<xsl:attribute name="src">
     		/album/photo/<xsl:value-of select="@id"/>
     	</xsl:attribute>

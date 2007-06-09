@@ -132,6 +132,7 @@ public class HTTPClientHandler implements Runnable {
 			try {
 				byte[] buf = new byte[4096];
 				while(clientInput.read(buf) != -1);
+				throw e;
 			} catch(IOException iE) {
 				throw new HTTPServerErrorException();
 			}

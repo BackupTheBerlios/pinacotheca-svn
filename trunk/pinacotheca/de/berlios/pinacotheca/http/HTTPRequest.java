@@ -6,9 +6,12 @@ import java.net.URLDecoder;
 import java.util.HashMap;
 import java.util.StringTokenizer;
 
+import sun.misc.BASE64Decoder;
+
 import de.berlios.pinacotheca.http.exceptions.HTTPBadRequestException;
 import de.berlios.pinacotheca.http.exceptions.HTTPException;
 import de.berlios.pinacotheca.http.exceptions.HTTPServerErrorException;
+import de.berlios.pinacotheca.http.exceptions.HTTPUnauthorizedException;
 
 public class HTTPRequest extends HTTPMessage {
 	public static final String TYPE_GET = "GET";
@@ -130,5 +133,32 @@ public class HTTPRequest extends HTTPMessage {
 				throw new HTTPBadRequestException();
 			totalBytesRead += bytesRead;
 		}
+	}
+
+	public HTTPAuthorizationCredentials getCredentials() throws HTTPException {
+		String token, userPass, userid, password;
+		int delim;
+		
+		if(!containsHeaderField("Authorization"))
+			throw new HTTPUnauthorizedException();
+		
+		token = getHeaderField("Authorization").getToken();
+		
+		if(!token.startsWith("Basic "))
+			throw new HTTPUnauthorizedException();
+		
+		try {
+			userPass = token.substring("Basic ".length());
+			userPass = new String(new BASE64Decoder().decodeBuffer(userPass));
+			
+			delim = userPass.indexOf(':');
+			if(delim == -1) throw new HTTPUnauthorizedException();
+			userid = userPass.substring(0, delim);
+			password = userPass.substring(delim + 1);
+		} catch (IOException e) {
+			throw new HTTPUnauthorizedException();
+		}
+		
+		return new HTTPAuthorizationCredentials(userid, password);
 	}
 }

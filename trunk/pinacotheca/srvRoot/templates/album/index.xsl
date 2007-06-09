@@ -13,7 +13,7 @@
 			<xsl:attribute name="href">
 				/album/show/<xsl:value-of select="@id"/>
 			</xsl:attribute>
-			<xsl:value-of select="title"/>
+			<xsl:value-of select="name"/>
 			</a></h2>
 		<p><xsl:value-of select="description"/></p>
 	</div>
