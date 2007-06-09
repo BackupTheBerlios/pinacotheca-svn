@@ -2,8 +2,4 @@
 <?xml-stylesheet type="text/xsl" href="/album/template/index.xsl"?>
 
 <albumlist>
-	<album id="1">
-		<name>Test</name>
-		<description>Test Album</description>
-	</album>
 </albumlist>
