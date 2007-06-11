@@ -9,6 +9,11 @@ public class AOTag {
 		this.name = name;
 		
 	}
+	
+	public boolean equals(Object obj) {
+		AOTag otherTag = (AOTag) obj;
+		return (otherTag.id == this.id && otherTag.name.equals(this.name));
+	}
 
 	public AOTag() {
 	}

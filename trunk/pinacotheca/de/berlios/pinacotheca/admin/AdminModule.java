@@ -3,6 +3,7 @@ package de.berlios.pinacotheca.admin;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 
@@ -47,59 +48,7 @@ public class AdminModule extends PTResponder implements PTModule {
 
 	private static long lastSessionAccess = 0L;
 
-	public AdminModule() throws HTTPException {
-		try {
-			dbHandler = DatabaseHandler.getInstance();
-			filesHandler = new XMLFilesHandler();
-		} catch (DatabaseException e) {
-			throw new HTTPServerErrorException();
-		}
-	}
-
-	public void handleRequest() throws HTTPException {
-		String reqURL = request.getRequestURL().substring("/admin".length());
-		HTTPAuthorizationCredentials credentials;
-
-		if (!secureConnection)
-			throw new HTTPNotFoundException(request.getRequestURL());
-
-		synchronized (this) {
-			if (sessionLock) {
-				if ((System.currentTimeMillis() - lastSessionAccess) > 300000) {
-					sessionLock = false;
-					throw new HTTPUnauthorizedException();
-				}
-				if (!evalCookie())
-					throw new HTTPForbiddenException();
-			}
-
-			credentials = request.getCredentials();
-
-			if (!credentials.getUserid().equals(PTConfiguration.getAdminUser())
-					|| !credentials.getPassword().equals(PTConfiguration.getAdminPass()))
-				throw new HTTPUnauthorizedException();
-
-			if (reqURL.equals("/")) {
-				returnXMLFile("admin/index.xml");
-			} else if (reqURL.startsWith("/template/")) {
-				returnXMLFile("templates/admin/" + reqURL.substring("/template/".length()));
-			} else if (reqURL.startsWith("/album/")) {
-				handleAlbumAction(reqURL.substring("/album/".length()));
-			} else if (reqURL.startsWith("/tags/")) {
-				handleTagAction(reqURL.substring("/tags/".length()));
-			} else if (reqURL.startsWith("/photo/")) {
-				handlePhotoAction(reqURL.substring("/photo/".length()));
-			} else if (reqURL.equals("/stylesheet")) {
-				returnCSSStylesheet("stylesheet.css");
-			} else {
-				throw new HTTPNotFoundException(request.getRequestURL());
-			}
-
-			lastSessionAccess = System.currentTimeMillis();
-			setHeaderField("Set-Cookie", "access=" + lastSessionAccess + "; path=/admin/");
-			sessionLock = true;
-		}
-	}
+	private static long sessionInit = 0L;
 
 	private boolean evalCookie() {
 		String token, cValue;
@@ -119,7 +68,7 @@ public class AdminModule extends PTResponder implements PTModule {
 
 		try {
 			lVal = new Long(cValue);
-			if (lVal != lastSessionAccess)
+			if (lVal != sessionInit)
 				return false;
 		} catch (NumberFormatException e) {
 			return false;
@@ -142,6 +91,10 @@ public class AdminModule extends PTResponder implements PTModule {
 				Integer tagId = new Integer(action.substring("edit/".length()));
 
 				handleTagEdit(tagId);
+			} else if (action.startsWith("assign/")) {
+				Integer albumId = new Integer(action.substring("assign/".length()));
+				
+				handleTagAssignment(albumId);
 			} else {
 				throw new HTTPNotFoundException(request.getRequestURL());
 			}
@@ -150,13 +103,10 @@ public class AdminModule extends PTResponder implements PTModule {
 		}
 	}
 
-	private void handleTagEdit(Integer tagId) throws HTTPException {
-		HashMap<String, String> postVars;
+	private void handleTagAddition() throws HTTPException {
+		HashMap<String, ArrayList<String>> postVars;
 		AOTag tag;
 		String tagName;
-
-		if (!request.hasPostVars())
-			throw new HTTPBadRequestException();
 
 		postVars = request.getPostVars();
 
@@ -164,7 +114,64 @@ public class AdminModule extends PTResponder implements PTModule {
 			throw new HTTPBadRequestException();
 
 		try {
-			tagName = postVars.get("tagname");
+			tagName = postVars.get("tagname").get(0);
+			tag = new AOTag();
+			tag.setName(tagName);
+			dbHandler.addTag(tag);
+			dbHandler.commit();
+			filesHandler.generateTagsAdminFile();
+			returnRedirect("/admin/tags/");
+		} catch (DatabaseException e) {
+			throw new HTTPServerErrorException();
+		} catch (IOException e) {
+			throw new HTTPServerErrorException();
+		}
+	}
+
+	private void handleTagAssignment(int albumId) throws HTTPException {
+		HashMap<String, ArrayList<String>> postVars;
+		Integer tagId, photoId;
+		AOTag tag;
+		AOPhoto photo;
+
+		postVars = request.getPostVars();
+
+		if (!postVars.containsKey("tagid"))
+			throw new HTTPBadRequestException();
+
+		try {
+			tagId = new Integer(postVars.get("tagid").get(0));
+			tag = dbHandler.getTag(tagId);
+
+			for (String key : postVars.keySet()) {
+				if (key.startsWith("assigntag")) {
+					photoId = new Integer(key.substring("assigntag".length()));
+					photo = dbHandler.getPhoto(photoId);
+					dbHandler.assignPhotoTag(photo, tag);
+				}
+				dbHandler.commit();
+				returnRedirect("/admin/album/edit/" + albumId);
+			}
+		} catch (NumberFormatException e) {
+			throw new HTTPBadRequestException();
+		} catch (DatabaseException e) {
+			throw new HTTPServerErrorException();
+		}
+
+	}
+
+	private void handleTagEdit(Integer tagId) throws HTTPException {
+		HashMap<String, ArrayList<String>> postVars;
+		AOTag tag;
+		String tagName;
+
+		postVars = request.getPostVars();
+
+		if (!postVars.containsKey("tagname"))
+			throw new HTTPBadRequestException();
+
+		try {
+			tagName = postVars.get("tagname").get(0);
 			tag = dbHandler.getTag(tagId);
 			tag.setName(tagName);
 			dbHandler.updateTag(tag);
@@ -217,195 +224,6 @@ public class AdminModule extends PTResponder implements PTModule {
 			}
 		} catch (NumberFormatException e) {
 			throw new HTTPNotFoundException(request.getRequestURL());
-		}
-	}
-
-	private void returnPhotoEditForm(Integer photoId) throws HTTPException {
-		returnXMLFile("admin/photo_" + photoId + ".xml");
-	}
-
-	private void handleAlbumAction(String action) throws HTTPException {
-		try {
-			if (action.startsWith("edit/")) {
-				Integer album = new Integer(action.substring("edit/".length()));
-
-				if (request.getRequestType().equals(HTTPRequest.TYPE_POST))
-					handleAlbumEdit(album);
-				else
-					returnAlbumEditForm(album);
-			} else if (action.startsWith("delete/")) {
-				Integer album = new Integer(action.substring("delete/".length()));
-
-				handleAlbumDelete(album);
-			} else if (action.equals("add/")) {
-				if (request.getRequestType().equals(HTTPRequest.TYPE_POST))
-					handleAlbumAddition();
-				else
-					throw new HTTPNotFoundException(request.getRequestURL());
-			} else {
-				throw new HTTPNotFoundException(request.getRequestURL());
-			}
-		} catch (NumberFormatException e) {
-			throw new HTTPNotFoundException(request.getRequestURL());
-		}
-	}
-
-	private void handlePhotoDelete(Integer photoId) throws HTTPException {
-		try {
-			AOPhoto photo = dbHandler.getPhoto(photoId);
-			File photoAdminFile = new File(PTConfiguration.getServerRoot(), "admin/photo_" + photoId + ".xml");
-			File photoFile = new File(PTConfiguration.getServerRoot(), "photos/photo_" + photoId + ".jpg");
-			if (photoAdminFile.isFile())
-				photoAdminFile.delete();
-			if(photoFile.isFile())
-				photoFile.delete();
-			dbHandler.deletePhoto(photo);
-			dbHandler.commit();
-			filesHandler.generateAlbumFiles(photo.getAlbumId());
-			returnRedirect("/admin/album/edit/" + photo.getAlbumId());
-		} catch (DatabaseException e) {
-			throw new HTTPServerErrorException();
-		} catch (IOException e) {
-			throw new HTTPServerErrorException();
-		}
-	}
-
-	private void handleAlbumDelete(Integer albumId) throws HTTPException {
-		try {
-			AOAlbum album = new AOAlbum();
-			File albumFile = new File(PTConfiguration.getServerRoot(), "admin/album_" + albumId + ".xml");
-			album.setId(albumId);
-			dbHandler.deleteAlbum(album);
-			dbHandler.commit();
-			if (albumFile.isFile())
-				albumFile.delete();
-			albumFile = new File(PTConfiguration.getServerRoot(), "album/album_" + albumId + ".xml");
-			if (albumFile.isFile())
-				albumFile.delete();
-			filesHandler.generateIndexFiles();
-			returnRedirect("/admin/");
-		} catch (DatabaseException e) {
-			throw new HTTPServerErrorException();
-		} catch (IOException e) {
-			PTLogger.logError(e.getMessage());
-			throw new HTTPServerErrorException();
-		}
-	}
-
-	private void handlePhotoEdit(Integer photoId) throws HTTPException {
-		HashMap<String, String> postVars;
-		AOPhoto photo;
-
-		if (!request.hasPostVars())
-			throw new HTTPBadRequestException();
-
-		postVars = request.getPostVars();
-		if (!postVars.containsKey("photodescription"))
-			throw new HTTPBadRequestException();
-
-		try {
-			photo = dbHandler.getPhoto(photoId);
-			photo.setDescription(postVars.get("photodescription"));
-			dbHandler.updatePhoto(photo);
-			dbHandler.commit();
-			filesHandler.generatePhotoAdminFile(photo.getId());
-			returnPhotoEditForm(photoId);
-		} catch (DatabaseException e) {
-			throw new HTTPServerErrorException();
-		} catch (IOException e) {
-			throw new HTTPServerErrorException();
-		}
-	}
-
-	private void handleAlbumEdit(Integer albumId) throws HTTPException {
-		HashMap<String, String> postVars;
-		AOAlbum album = new AOAlbum();
-
-		if (!request.hasPostVars())
-			throw new HTTPBadRequestException();
-
-		postVars = request.getPostVars();
-		if (!postVars.containsKey("albumname") || !postVars.containsKey("albumdescription"))
-			throw new HTTPBadRequestException();
-
-		try {
-			album.setId(albumId);
-			album.setName(postVars.get("albumname"));
-			album.setDescription(postVars.get("albumdescription"));
-			dbHandler.updateAlbum(album);
-			dbHandler.commit();
-			filesHandler.generateAlbumFiles(albumId);
-			filesHandler.generateIndexFiles();
-			returnAlbumEditForm(albumId);
-		} catch (IOException e) {
-			throw new HTTPServerErrorException();
-		} catch (DatabaseException e) {
-			throw new HTTPServerErrorException();
-		}
-	}
-
-	private void handleTagAddition() throws HTTPException {
-		HashMap<String, String> postVars;
-		AOTag tag;
-		String tagName;
-
-		if (!request.hasPostVars())
-			throw new HTTPBadRequestException();
-
-		postVars = request.getPostVars();
-
-		if (!postVars.containsKey("tagname"))
-			throw new HTTPBadRequestException();
-
-		try {
-			tagName = postVars.get("tagname");
-			tag = new AOTag();
-			tag.setName(tagName);
-			dbHandler.addTag(tag);
-			dbHandler.commit();
-			filesHandler.generateTagsAdminFile();
-			returnRedirect("/admin/tags/");
-		} catch (DatabaseException e) {
-			throw new HTTPServerErrorException();
-		} catch (IOException e) {
-			throw new HTTPServerErrorException();
-		}
-	}
-
-	private void handleAlbumAddition() throws HTTPException {
-		HashMap<String, String> postVars;
-		AOAlbum album;
-		String albumName, albumDescription, url;
-		XMLFilesHandler fHandler;
-		int albumId;
-
-		if (!request.hasPostVars())
-			throw new HTTPBadRequestException();
-
-		postVars = request.getPostVars();
-
-		if (!postVars.containsKey("albumname"))
-			throw new HTTPBadRequestException();
-
-		albumName = postVars.get("albumname");
-		albumDescription = (postVars.containsKey("albumdescription")) ? postVars.get("albumdescription") : "";
-		album = new AOAlbum();
-		album.setName(albumName);
-		album.setDescription(albumDescription);
-		try {
-			albumId = dbHandler.addAlbum(album);
-			dbHandler.commit();
-			url = "/admin/album/edit/" + albumId;
-			fHandler = new XMLFilesHandler();
-			fHandler.generateAlbumFiles(albumId);
-			fHandler.generateIndexFiles();
-			returnRedirect(url);
-		} catch (DatabaseException e) {
-			PTLogger.logError(e.getMessage());
-			throw new HTTPServerErrorException();
-		} catch (IOException e) {
-			PTLogger.logError(e.getMessage());
-			throw new HTTPServerErrorException();
 		}
 	}
 
@@ -468,6 +286,210 @@ public class AdminModule extends PTResponder implements PTModule {
 			throw new HTTPServerErrorException();
 		}
 	}
+	
+	private AOTag getTag(ArrayList<AOTag> tags, int tagId) {
+		for(AOTag tag : tags) {
+			if(tag.getId() == tagId)
+				return tag;
+		}
+		return null;
+	}
+
+	private void handlePhotoEdit(Integer photoId) throws HTTPException {
+		HashMap<String, ArrayList<String>> postVars;
+		ArrayList<AOTag> alreadyAssigned;
+		ArrayList<AOTag> tags;
+		AOTag tag;
+		ArrayList<String> assignedtags = new ArrayList<String>();
+		ArrayList<String> unassignedtags = new ArrayList<String>();
+		AOPhoto photo;
+
+		postVars = request.getPostVars();
+		if (!postVars.containsKey("photodescription"))
+			throw new HTTPBadRequestException();
+		
+		if(postVars.containsKey("assignedtags")) {
+			assignedtags = postVars.get("assignedtags");
+		}
+		
+		if(postVars.containsKey("unassignedtags")) {
+			unassignedtags = postVars.get("unassignedtags");
+		}
+
+		try {
+			photo = dbHandler.getPhoto(photoId);
+			dbHandler.getTags(photo);
+			alreadyAssigned = photo.getTags();
+			tags = dbHandler.getTags();
+			photo.setDescription(postVars.get("photodescription").get(0));
+			dbHandler.updatePhoto(photo);
+			
+			for(String tagStr : assignedtags) {
+				Integer tagId = new Integer(tagStr);
+				if((tag = getTag(tags, tagId)) == null)
+					throw new HTTPServerErrorException();
+				if(!alreadyAssigned.contains(tag))
+					dbHandler.assignPhotoTag(photo, tag);
+			}
+			
+			for(String tagStr : unassignedtags) {
+				Integer tagId = new Integer(tagStr);
+				if((tag = getTag(tags, tagId)) == null)
+					throw new HTTPServerErrorException();
+				if(alreadyAssigned.contains(tag))
+					dbHandler.unassignPhotoTag(photo, tag);
+			}
+			
+			dbHandler.commit();
+			filesHandler.generatePhotoAdminFile(photo.getId());
+			returnPhotoEditForm(photoId);
+		} catch (DatabaseException e) {
+			throw new HTTPServerErrorException();
+		} catch (IOException e) {
+			throw new HTTPServerErrorException();
+		}
+	}
+
+	private void handlePhotoDelete(Integer photoId) throws HTTPException {
+		try {
+			AOPhoto photo = dbHandler.getPhoto(photoId);
+			File photoAdminFile = new File(PTConfiguration.getServerRoot(), "admin/photo_" + photoId + ".xml");
+			File photoFile = new File(PTConfiguration.getServerRoot(), "photos/photo_" + photoId + ".jpg");
+
+			if (photoAdminFile.isFile())
+				photoAdminFile.delete();
+			if (photoFile.isFile())
+				photoFile.delete();
+
+			dbHandler.deletePhoto(photo);
+			dbHandler.commit();
+			filesHandler.generateAlbumFiles(photo.getAlbumId());
+			returnRedirect("/admin/album/edit/" + photo.getAlbumId());
+		} catch (DatabaseException e) {
+			throw new HTTPServerErrorException();
+		} catch (IOException e) {
+			throw new HTTPServerErrorException();
+		}
+	}
+
+	private void handleAlbumAction(String action) throws HTTPException {
+		try {
+			if (action.startsWith("edit/")) {
+				Integer album = new Integer(action.substring("edit/".length()));
+
+				if (request.getRequestType().equals(HTTPRequest.TYPE_POST))
+					handleAlbumEdit(album);
+				else
+					returnAlbumEditForm(album);
+			} else if (action.startsWith("delete/")) {
+				Integer album = new Integer(action.substring("delete/".length()));
+
+				handleAlbumDelete(album);
+			} else if (action.equals("add")) {
+				if (request.getRequestType().equals(HTTPRequest.TYPE_POST))
+					handleAlbumAddition();
+				else
+					throw new HTTPNotFoundException(request.getRequestURL());
+			} else {
+				throw new HTTPNotFoundException(request.getRequestURL());
+			}
+		} catch (NumberFormatException e) {
+			throw new HTTPNotFoundException(request.getRequestURL());
+		}
+	}
+
+	private void handleAlbumAddition() throws HTTPException {
+		HashMap<String, ArrayList<String>> postVars;
+		AOAlbum album;
+		String albumName, albumDescription, url;
+		XMLFilesHandler fHandler;
+		int albumId;
+
+		postVars = request.getPostVars();
+
+		if (!postVars.containsKey("albumname"))
+			throw new HTTPBadRequestException();
+
+		albumName = postVars.get("albumname").get(0);
+		albumDescription = (postVars.containsKey("albumdescription")) ? postVars.get("albumdescription").get(0) : "";
+		album = new AOAlbum();
+		album.setName(albumName);
+		album.setDescription(albumDescription);
+		try {
+			albumId = dbHandler.addAlbum(album);
+			dbHandler.commit();
+			url = "/admin/album/edit/" + albumId;
+			fHandler = new XMLFilesHandler();
+			fHandler.generateAlbumFiles(albumId);
+			fHandler.generateIndexFiles();
+			returnRedirect(url);
+		} catch (DatabaseException e) {
+			PTLogger.logError(e.getMessage());
+			throw new HTTPServerErrorException();
+		} catch (IOException e) {
+			PTLogger.logError(e.getMessage());
+			throw new HTTPServerErrorException();
+		}
+	}
+
+	private void handleAlbumEdit(Integer albumId) throws HTTPException {
+		HashMap<String, ArrayList<String>> postVars;
+		AOAlbum album = new AOAlbum();
+
+		postVars = request.getPostVars();
+		if (!postVars.containsKey("albumname") || !postVars.containsKey("albumdescription"))
+			throw new HTTPBadRequestException();
+
+		try {
+			album.setId(albumId);
+			album.setName(postVars.get("albumname").get(0));
+			album.setDescription(postVars.get("albumdescription").get(0));
+			dbHandler.updateAlbum(album);
+			dbHandler.commit();
+			filesHandler.generateAlbumFiles(albumId);
+			filesHandler.generateIndexFiles();
+			returnAlbumEditForm(albumId);
+		} catch (IOException e) {
+			throw new HTTPServerErrorException();
+		} catch (DatabaseException e) {
+			throw new HTTPServerErrorException();
+		}
+	}
+
+	private void handleAlbumDelete(Integer albumId) throws HTTPException {
+		try {
+			AOAlbum album = new AOAlbum();
+			File albumFile = new File(PTConfiguration.getServerRoot(), "admin/album_" + albumId + ".xml");
+			album.setId(albumId);
+			dbHandler.deleteAlbum(album);
+			dbHandler.commit();
+			if (albumFile.isFile())
+				albumFile.delete();
+			albumFile = new File(PTConfiguration.getServerRoot(), "album/album_" + albumId + ".xml");
+			if (albumFile.isFile())
+				albumFile.delete();
+			filesHandler.generateIndexFiles();
+			returnRedirect("/admin/");
+		} catch (DatabaseException e) {
+			throw new HTTPServerErrorException();
+		} catch (IOException e) {
+			PTLogger.logError(e.getMessage());
+			throw new HTTPServerErrorException();
+		}
+	}
+
+	private void savePhoto(String photoFileName, byte[] payloadBuffer, int payloadStart, int payloadLength) throws HTTPException,
+			IOException {
+		FileOutputStream oStream;
+		File photoFile = new File(PTConfiguration.getServerRoot(), "photos/" + photoFileName);
+
+		if (!photoFile.exists() && !photoFile.createNewFile())
+			throw new HTTPServerErrorException();
+
+		oStream = new FileOutputStream(photoFile);
+		oStream.write(payloadBuffer, payloadStart, payloadLength);
+		oStream.close();
+	}
 
 	private void getMetadata(int photoId) {
 		try {
@@ -496,21 +518,70 @@ public class AdminModule extends PTResponder implements PTModule {
 		}
 	}
 
-	private void savePhoto(String photoFileName, byte[] payloadBuffer, int payloadStart, int payloadLength) throws HTTPException,
-			IOException {
-		FileOutputStream oStream;
-		File photoFile = new File(PTConfiguration.getServerRoot(), "photos/" + photoFileName);
-
-		if (!photoFile.exists() && !photoFile.createNewFile())
-			throw new HTTPServerErrorException();
-
-		oStream = new FileOutputStream(photoFile);
-		oStream.write(payloadBuffer, payloadStart, payloadLength);
-		oStream.close();
-	}
-
 	private void returnAlbumEditForm(Integer album) throws HTTPException {
 		returnXMLFile("admin/album_" + album + ".xml");
+	}
+
+	private void returnPhotoEditForm(Integer photoId) throws HTTPException {
+		returnXMLFile("admin/photo_" + photoId + ".xml");
+	}
+
+	public AdminModule() throws HTTPException {
+		try {
+			dbHandler = DatabaseHandler.getInstance();
+			filesHandler = new XMLFilesHandler();
+		} catch (DatabaseException e) {
+			throw new HTTPServerErrorException();
+		}
+	}
+
+	public void handleRequest() throws HTTPException {
+		String reqURL = request.getRequestURL().substring("/admin".length());
+		HTTPAuthorizationCredentials credentials;
+
+		if (!secureConnection)
+			throw new HTTPNotFoundException(request.getRequestURL());
+
+		synchronized (this) {
+			if (sessionLock) {
+				if ((System.currentTimeMillis() - lastSessionAccess) > 300000) {
+					sessionLock = false;
+					sessionInit = 0L;
+					throw new HTTPUnauthorizedException();
+				}
+				if (!evalCookie())
+					throw new HTTPForbiddenException();
+			}
+
+			credentials = request.getCredentials();
+
+			if (!credentials.getUserid().equals(PTConfiguration.getAdminUser())
+					|| !credentials.getPassword().equals(PTConfiguration.getAdminPass()))
+				throw new HTTPUnauthorizedException();
+
+			if (reqURL.equals("/")) {
+				returnXMLFile("admin/index.xml");
+			} else if (reqURL.startsWith("/template/")) {
+				returnXMLFile("templates/admin/" + reqURL.substring("/template/".length()));
+			} else if (reqURL.startsWith("/album/")) {
+				handleAlbumAction(reqURL.substring("/album/".length()));
+			} else if (reqURL.startsWith("/tags/")) {
+				handleTagAction(reqURL.substring("/tags/".length()));
+			} else if (reqURL.startsWith("/photo/")) {
+				handlePhotoAction(reqURL.substring("/photo/".length()));
+			} else if (reqURL.equals("/stylesheet")) {
+				returnCSSStylesheet("stylesheet.css");
+			} else {
+				throw new HTTPNotFoundException(request.getRequestURL());
+			}
+
+			lastSessionAccess = System.currentTimeMillis();
+			if (sessionInit == 0L) {
+				sessionInit = lastSessionAccess;
+				setHeaderField("Set-Cookie", "access=" + sessionInit + "; path=/admin/");
+			}
+			sessionLock = true;
+		}
 	}
 
 	public void setSecureConnection(boolean secureConnection) {

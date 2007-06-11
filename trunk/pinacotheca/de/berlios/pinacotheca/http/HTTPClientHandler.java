@@ -97,7 +97,7 @@ public class HTTPClientHandler implements Runnable {
 		if (dataInput == null)
 			return;
 
-		buffer = new byte[1024];
+		buffer = new byte[512000];
 		while ((bytesRead = dataInput.read(buffer)) != -1) {
 			clientOutput.write(buffer, 0, bytesRead);
 		}

@@ -9,6 +9,7 @@ import java.util.HashMap;
 import de.berlios.pinacotheca.PTModule;
 import de.berlios.pinacotheca.PTResponder;
 import de.berlios.pinacotheca.db.AOPhoto;
+import de.berlios.pinacotheca.db.AOTag;
 import de.berlios.pinacotheca.db.DatabaseException;
 import de.berlios.pinacotheca.db.DatabaseHandler;
 import de.berlios.pinacotheca.http.HTTPRequest;
@@ -38,31 +39,104 @@ public class AJAXModule extends PTResponder implements PTModule {
 
 	public void handleRequest() throws HTTPException {
 		String reqURL = request.getRequestURL().substring("/ajax/".length());
-		HashMap<String, String> postVars;
-		
-		if(!request.hasPostVars())
-			throw new HTTPBadRequestException();
-		
-		postVars = request.getPostVars();
 		
 		if(reqURL.equals("nextphoto")) {
-			returnNextPhoto(postVars);
+			returnNextPhoto();
 		} else if(reqURL.equals("prevphoto")) {
-			returnPrevPhoto(postVars);
+			returnPrevPhoto();
 		} else if(reqURL.equals("photoinfo")) {
-			returnPhotoInfo(postVars);
+			returnPhotoInfo();
+		} else if(reqURL.equals("taglist")) {
+			returnTagList();
+		} else if(reqURL.equals("tagassignment")) {
+			returnTagAssignment();
 		} else {
 			throw new HTTPNotFoundException(request.getRequestURL());
 		}
 	}
 
-	private void returnPhotoInfo(HashMap<String, String> postVars) throws HTTPException {
+	private void returnTagAssignment() throws HTTPException {
+		HashMap<String, ArrayList<String>> postVars;
+		
+		postVars = request.getPostVars();
+		
 		if(!postVars.containsKey("photo"))
 			throw new HTTPBadRequestException();
 		
 		try {
 			ByteArrayOutputStream oStream = new ByteArrayOutputStream();
-			Integer photoId = new Integer(postVars.get("photo"));
+			Integer photoId = new Integer(postVars.get("photo").get(0));
+			AOPhoto photo = dbHandler.getPhoto(photoId);
+			ArrayList<AOTag> allTags = dbHandler.getTags();
+			ArrayList<AOTag> assignedTags;
+			HashMap<String, String> attributes = new HashMap<String, String>();
+			dbHandler.getTags(photo);
+			assignedTags = photo.getTags();
+			if(photo == null)
+				throw new HTTPNotFoundException(request.getRequestURL());
+			XMLWriter writer = new XMLWriter(oStream);
+			writer.addNode("responsedata");
+			
+			for(AOTag tag : assignedTags) {
+				attributes.put("id", String.valueOf(tag.getId()));
+				attributes.put("name", tag.getName());
+				writer.addNode("assignedtag", true, attributes);
+			}
+			
+			for(AOTag tag : allTags) {
+				if(assignedTags.contains(tag)) continue;
+				attributes.put("id", String.valueOf(tag.getId()));
+				attributes.put("name", tag.getName());
+				writer.addNode("unassignedtag", true, attributes);
+			}
+			
+			writer.closeNode();
+			oStream.close();
+			ByteArrayInputStream stream = new ByteArrayInputStream(oStream.toByteArray());
+			returnXMLStream(stream);
+		} catch(NumberFormatException e) {
+			throw new HTTPBadRequestException();
+		} catch (DatabaseException e) {
+			throw new HTTPServerErrorException();
+		} catch (IOException e) {
+			throw new HTTPServerErrorException();
+		}
+	}
+
+	private void returnTagList() throws HTTPException {
+		try {
+			ByteArrayOutputStream oStream = new ByteArrayOutputStream();
+			ArrayList<AOTag> tags = dbHandler.getTags();
+			XMLWriter writer = new XMLWriter(oStream);
+			HashMap<String, String> attributes = new HashMap<String, String>();
+			writer.addNode("responsedata");
+			for(AOTag tag : tags) {
+				attributes.put("id", String.valueOf(tag.getId()));
+				attributes.put("name", tag.getName());
+				writer.addNode("tag", true, attributes);
+			}
+			writer.closeNode();
+			oStream.close();
+			ByteArrayInputStream stream = new ByteArrayInputStream(oStream.toByteArray());
+			returnXMLStream(stream);
+		} catch (DatabaseException e) {
+			throw new HTTPServerErrorException();
+		} catch (IOException e) {
+			throw new HTTPServerErrorException();
+		}
+	}
+
+	private void returnPhotoInfo() throws HTTPException {
+		HashMap<String, ArrayList<String>> postVars;
+		
+		postVars = request.getPostVars();
+		
+		if(!postVars.containsKey("photo"))
+			throw new HTTPBadRequestException();
+		
+		try {
+			ByteArrayOutputStream oStream = new ByteArrayOutputStream();
+			Integer photoId = new Integer(postVars.get("photo").get(0));
 			AOPhoto photo = dbHandler.getPhoto(photoId);
 			if(photo == null)
 				throw new HTTPNotFoundException(request.getRequestURL());
@@ -87,14 +161,18 @@ public class AJAXModule extends PTResponder implements PTModule {
 		}
 	}
 
-	private void returnNextPhoto(HashMap<String, String> postVars) throws HTTPException {
+	private void returnNextPhoto() throws HTTPException {
+		HashMap<String, ArrayList<String>> postVars;
+		
+		postVars = request.getPostVars();
+		
 		if(!postVars.containsKey("currentphoto"))
 			throw new HTTPBadRequestException();
 		
 		try {
 			Integer nPhotoId;
 			ByteArrayOutputStream oStream = new ByteArrayOutputStream();
-			Integer photoId = new Integer(postVars.get("currentphoto"));
+			Integer photoId = new Integer(postVars.get("currentphoto").get(0));
 			AOPhoto photo = dbHandler.getPhoto(photoId);
 			if(photo == null)
 				throw new HTTPNotFoundException(request.getRequestURL());
@@ -120,14 +198,18 @@ public class AJAXModule extends PTResponder implements PTModule {
 		}
 	}
 	
-	private void returnPrevPhoto(HashMap<String, String> postVars) throws HTTPException {
+	private void returnPrevPhoto() throws HTTPException {
+		HashMap<String, ArrayList<String>> postVars;
+		
+		postVars = request.getPostVars();
+		
 		if(!postVars.containsKey("currentphoto"))
 			throw new HTTPBadRequestException();
 		
 		try {
 			Integer pPhotoId;
 			ByteArrayOutputStream oStream = new ByteArrayOutputStream();
-			Integer photoId = new Integer(postVars.get("currentphoto"));
+			Integer photoId = new Integer(postVars.get("currentphoto").get(0));
 			AOPhoto photo = dbHandler.getPhoto(photoId);
 			if(photo == null)
 				throw new HTTPNotFoundException(request.getRequestURL());

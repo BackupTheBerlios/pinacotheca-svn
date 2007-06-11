@@ -3,6 +3,7 @@ package de.berlios.pinacotheca.http;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.StringTokenizer;
 
@@ -38,22 +39,18 @@ public class HTTPRequest extends HTTPMessage {
 		this.requestType = requestType;
 	}
 
-	public boolean hasPostVars() {
-		if (!containsHeaderField("Content-Type"))
-			return false;
-
-		return getHeaderField("Content-Type").getToken().equals("application/x-www-form-urlencoded");
-	}
-
-	public HashMap<String, String> getPostVars() throws HTTPException {
+	public HashMap<String, ArrayList<String>> getPostVars() throws HTTPException {
 		int contentLength;
 		byte[] buffer;
 		String payLoad;
 		StringTokenizer tokenizer;
-		HashMap<String, String> postVars = new HashMap<String, String>();
+		HashMap<String, ArrayList<String>> postVars = new HashMap<String, ArrayList<String>>();
+		ArrayList<String> list;
 
-		if (!containsHeaderField("Content-Length"))
+		if (!containsHeaderField("Content-Type") || !containsHeaderField("Content-Length")
+				|| !getHeaderField("Content-Type").getToken().equals("application/x-www-form-urlencoded"))
 			throw new HTTPBadRequestException();
+
 		try {
 			contentLength = new Integer(getHeaderField("Content-Length").getToken());
 			buffer = new byte[contentLength];
@@ -75,12 +72,19 @@ public class HTTPRequest extends HTTPMessage {
 				throw new HTTPBadRequestException();
 			try {
 				key = URLDecoder.decode(token.substring(0, delim), "UTF-8");
+				key = key.replaceAll("\\s", "");
 				value = URLDecoder.decode(token.substring(delim + 1), "UTF-8");
 			} catch (UnsupportedEncodingException e) {
 				throw new HTTPServerErrorException();
 			}
-
-			postVars.put(key, value);
+			if(postVars.containsKey(key)) {
+				list = postVars.get(key);
+				list.add(value);
+			} else {
+				list = new ArrayList<String>();
+				list.add(value);
+				postVars.put(key, list);
+			}
 		}
 		return postVars;
 	}
@@ -126,10 +130,10 @@ public class HTTPRequest extends HTTPMessage {
 	private void readPayload(byte[] buffer, Integer contentLength) throws HTTPException, IOException {
 		int bytesRead = 0;
 		int totalBytesRead = 0;
-		
-		while(totalBytesRead < contentLength) {
+
+		while (totalBytesRead < contentLength) {
 			bytesRead = getPayloadStream().read(buffer, totalBytesRead, contentLength - totalBytesRead);
-			if(bytesRead == -1)
+			if (bytesRead == -1)
 				throw new HTTPBadRequestException();
 			totalBytesRead += bytesRead;
 		}
@@ -138,27 +142,28 @@ public class HTTPRequest extends HTTPMessage {
 	public HTTPAuthorizationCredentials getCredentials() throws HTTPException {
 		String token, userPass, userid, password;
 		int delim;
-		
-		if(!containsHeaderField("Authorization"))
+
+		if (!containsHeaderField("Authorization"))
 			throw new HTTPUnauthorizedException();
-		
+
 		token = getHeaderField("Authorization").getToken();
-		
-		if(!token.startsWith("Basic "))
+
+		if (!token.startsWith("Basic "))
 			throw new HTTPUnauthorizedException();
-		
+
 		try {
 			userPass = token.substring("Basic ".length());
 			userPass = new String(new BASE64Decoder().decodeBuffer(userPass));
-			
+
 			delim = userPass.indexOf(':');
-			if(delim == -1) throw new HTTPUnauthorizedException();
+			if (delim == -1)
+				throw new HTTPUnauthorizedException();
 			userid = userPass.substring(0, delim);
 			password = userPass.substring(delim + 1);
 		} catch (IOException e) {
 			throw new HTTPUnauthorizedException();
 		}
-		
+
 		return new HTTPAuthorizationCredentials(userid, password);
 	}
 }

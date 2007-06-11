@@ -67,7 +67,7 @@ public class XMLFilesHandler {
 		writeAlbumFile(stream, "/admin/template/album.xsl", album);
 	}
 
-	public void writeAlbumFile(FileOutputStream stream, String xslURL, AOAlbum album) throws IOException {
+	private void writeAlbumFile(FileOutputStream stream, String xslURL, AOAlbum album) throws IOException {
 		XMLWriter writer = new XMLWriter(stream);
 		ArrayList<AOPhoto> photos;
 

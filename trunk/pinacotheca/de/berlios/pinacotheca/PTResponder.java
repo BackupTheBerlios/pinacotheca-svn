@@ -65,6 +65,11 @@ public abstract class PTResponder {
 		returnFile(path);
 	}
 	
+	protected void returnJavascriptFile(String path) throws HTTPException {
+		response.setHeaderField("Content-Type", "text/javascript");
+		returnFile(path);
+	}
+	
 	protected void returnXMLStream(InputStream stream) throws HTTPException {
 		response.setHeaderField("Content-Type", "text/xml");
 		returnStream(stream);
