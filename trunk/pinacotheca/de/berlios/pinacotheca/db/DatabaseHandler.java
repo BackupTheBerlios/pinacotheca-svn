@@ -557,15 +557,18 @@ public class DatabaseHandler {
 	}
 
 	/**
-	 * Method to delete a tag in the database
-	 *  the assignment between photo and tag in the table
-	 * photo_tag.
+	 * Method to delete a tag in the database. Before delete a tag, delete the
+	 * assignment between photo and tag in the table photo_tag because
+	 * references.
 	 * 
 	 * @param tag
 	 * @throws DatabaseException
 	 */
 	public void deleteTag(AOTag tag) throws DatabaseException {
 		try {
+			dbConnection.createStatement().executeUpdate(
+					"DELETE FROM photo_tag WHERE tid = " + tag.getId());
+
 			dbConnection.createStatement().executeUpdate(
 					"DELETE FROM tag WHERE tid = " + tag.getId());
 
