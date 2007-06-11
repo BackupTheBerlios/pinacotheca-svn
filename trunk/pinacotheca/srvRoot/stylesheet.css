@@ -12,3 +12,6 @@ div.photothumbnail {
 	float: left;
 	margin: 10px;
 }
+img.diashow {
+	height: 100%;
+}

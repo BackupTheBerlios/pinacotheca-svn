@@ -23,6 +23,8 @@ public class AlbumModule extends PTResponder implements PTModule {
 			returnXMLFile("templates/album/" + reqURL.substring("template/".length()));
 		} else if(reqURL.startsWith("show/photo/")) {
 			returnHTMLFile("templates/album/photo.htm");
+		} else if (reqURL.startsWith("diashow/")){
+			returnHTMLFile("templates/album/diashow.htm");
 		} else if(reqURL.startsWith("show/")) {
 			returnAlbum(reqURL.substring("show/".length()));
 		} else if(reqURL.startsWith("photo/")) {

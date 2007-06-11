@@ -8,6 +8,9 @@
 </head>
 <body>
     <h1><xsl:value-of select="name"/></h1>
+    <p><a><xsl:attribute name="href">
+    		/album/diashow/<xsl:value-of select="id"/>
+   	</xsl:attribute>Diashow</a></p>
     <p><xsl:value-of select="description"/></p>
     <xsl:for-each select="photolist/photo">
     	<div class="photo">
