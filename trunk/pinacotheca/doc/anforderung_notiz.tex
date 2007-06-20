@@ -1,0 +1,97 @@
+\documentclass[a4paper,12pt,liststotocnumbered]{scrartcl}
+
+\usepackage[utf8x]{inputenc}
+\usepackage{ngerman}
+\usepackage{tabularx}
+\usepackage{graphicx}
+\usepackage{hyperref}
+\usepackage{calc}
+\usepackage{scrpage2}
+
+\pagestyle{scrheadings}
+
+\hypersetup{colorlinks=false,pdfborder=0 0 0}
+
+% command for version
+\newcommand{\lxVersion}[0]{0.6}
+% command for date
+\newcommand{\lxDate}[0]{\today}
+
+\chead[]{}
+\lohead[Webtechnologie I - T09]{Webtechnologie I - T09}
+\rohead[\today]{\today}
+
+%\chead[{
+%\lohead[Gateway- / Proxyserver]{Gateway- / Proxyserver}
+%\rohead[Projektname: ProximusPrime]{Projektname: ProximusPrime}
+%}]
+
+\title{Anforderungsdokument Fotoalbum}
+\author{Sebastian Eberlein, Sven Salzwedel - Team 09}
+
+\begin{document}
+
+\begin{figure}[h]
+	\begin{center}
+		\includegraphics[width=\textwidth/2]{logo}
+	\end{center}
+\end{figure}
+
+\begin{tabularx}{\textwidth}{lX}
+	Fach:&Webtechnologie I\\
+	Semester:&Sommersemester 2007\\
+	Prüfungsleistung:&Praktischer Leistungsnachweis\\
+	&\\
+	Teammitglieder:&Sebastian Eberlein\\
+	&Sven Salzwedel\\
+	Teamnummer:&T09\\
+\end{tabularx}
+
+\begin{center}
+\end{center}
+
+\begin{center}
+	\Large{\textbf{Thema:} Webbasiertes Fotoalbum}\\
+\end{center}
+\begin{center}
+	\Large{\textbf{Notiz zum Anforderungsdokument}}\\
+\end{center}
+
+\begin{center}
+	Datum: \today\\
+\end{center}
+
+\newpage
+
+%\maketitle
+
+\section{Funktionsänderungen}
+
+\subsection{Albumschlüssel}
+
+Es wurde eine weitere Funktion zum Programm hinzugefügt, welche nicht im
+ursprünglichen Anforderungsdokument erwähnt wurde. Es kann für ein Album
+ein Schlüssel vom Administrator generiert werden, sodass das jeweilige
+Album nur noch von den Personen angesehen werden kann, welche den
+dazugehörigen Schlüssel wissen.
+
+\subsection{Thumbnailgenerierung}
+
+Eine weitere Abhängigkeit die nicht im Anforderungsdokument beschrieben
+wurde ist eine zusätzliche Bibliothek \emph{JIU}
+(\url{http://schmidt.devlib.org/jiu/index.html}), die eingebunden werden
+musste um die Erzeugung der Thumbnails zu ermöglichen.
+
+\subsection{XSLT Prozessor}
+
+Der im Anforderungsdokument beschriebene XSLT Prozessor wurde nicht
+implementiert.  Dessen Aufgabe übernehmen die Clients selbst. Die
+xml-Dateien werden direkt an den Browser ausgeliefert, welcher dann die
+xslt-Dateien nachlädt und so die Seiten selbst generiert. Da die in den
+Vorgaben geforderte Clients diesen Mechanismus unterstützen, bleiben die
+geplanten Funktionalitäten genauso vorhanden als würde man einen
+serverseitigen XSLT-Prozessor einsetzen.
+
+\newpage
+
+\end{document}

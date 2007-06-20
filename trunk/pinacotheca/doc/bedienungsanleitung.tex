@@ -1,0 +1,239 @@
+\documentclass[a4paper,12pt,liststotocnumbered]{scrartcl}
+
+\usepackage[utf8x]{inputenc}
+\usepackage{ngerman}
+\usepackage{tabularx}
+\usepackage{graphicx}
+\usepackage{hyperref}
+\usepackage{calc}
+\usepackage{scrpage2}
+
+\hypersetup{colorlinks=false,pdfborder=0 0 0}
+\title{Bedienungsanleitung pinacotheca}
+\author{Sebastian Eberlein}
+
+\pagestyle{scrheadings}
+
+\chead[]{}
+\lohead[Webtechnologie I - T09]{Webtechnologie I - T09}
+\rohead[]{}
+
+
+\begin{document}
+
+\pagestyle{empty}
+
+\begin{figure}[h]
+	\begin{center}
+		\includegraphics[width=\textwidth/2]{logo}
+	\end{center}
+\end{figure}
+
+\begin{tabularx}{\textwidth}{lX}
+	Fach:&Webtechnologie I\\
+	Semester:&Sommersemester 2007\\
+	Prüfungsleistung:&Praktischer Leistungsnachweis\\
+	&\\
+	Teammitglieder:&Sebastian Eberlein\\
+	&Sven Salzwedel\\
+	Teamnummer:&T09\\
+\end{tabularx}
+
+\begin{center}
+\end{center}
+
+\begin{center}
+	\Large{\textbf{Thema:} Webbasiertes Fotoalbum}\\
+\end{center}
+\begin{center}
+	\Large{\textbf{Bedienungsanleitung}}\\
+\end{center}
+
+\begin{center}
+	Datum: \today\\
+\end{center}
+
+\newpage
+
+\pagestyle{scrheadings}
+
+\tableofcontents
+
+\newpage
+
+\section{Benutzung der Anwendung}
+
+\subsection{Startseite der Anwendung aufrufen}
+
+Um die Startseite der Anwendung aufzurufen, muss in einem Browsers die
+URL des Rechners auf der die Anwendung läuft und der konfigurierte Port
+angegeben werden (http://$<$zieladresse$>$:$<$port$>$). Als Browser
+können entweder der Internet Explorer Version 6.0 von Microsoft oder der
+Mozilla Firefox Version 1.5 verwendet werden.  Nach Eingabe der
+angegebenen URL gelangt man auf die Startseite auf der alle vorhandenen
+Alben angezeigt werden. Hier ist der Albumname, die dazugehörige
+Beschreibung sowie ein Link "`show Album"' um das jeweilige Album
+anzusehen, in einem farblich abgegrenzten Rahmen dargestellt.
+
+\subsection{Fotos eines Albums ansehen}
+
+Befindet man sich auf der Startseite, gelangt man durch klicken auf den
+Link "`Show Album"' auf eine Seite "`Viewing Album"' die alle Fotos des
+ausgewählten Albums als Miniaturbilder zeigt. Ist das Album durch einen
+Schlüssel geschützt, wird man aufgefordert den jeweiligen Schlüssel
+einzugeben. Ohne Kenntnis des vergebenen Schlüssels hat man somit keine
+Recht das jeweilige Album zu sehen. Durch klicken auf ein Foto kann man
+sich dieses als Detailansicht anzeigen lassen und gelangt auf die Seite
+"`Viewing Photo"'. In dieser Detailansicht kann man sich, ohne in die
+Miniaturansicht der Fotos des Albums zurück zu gehen, das vorhergehende
+oder das nächste Foto des Albums wiederum in Detailansicht anzeigen
+lassen. Hierfür existieren Links als Miniaturfotos mit der Bezeichnung
+"`Previous Photo"' und "`Next Photo"'. Auf der Seite "`Viewing Photo"'
+ist ein Link "`Go back to album"' vorhanden, um zur Seite "`Viewing
+Album"' zurück zu kehren.
+
+\subsection{Fotos nach Tags ansehen}
+
+Es existier auf der Startseite ein Link "`filtered by tags"'. Dieser
+Link führt auf eine Seite "`Viewing Fotos by Tags"', auf der der
+Betrachter nach einen oder mehreren Tags filtern kann.  Diese Filterung
+geschieht dann über die gesamte Menge der vorhandenen Fotos und Album-
+übergreifend. Nach der Filterung werden die betroffenen Fotos in
+Miniaturansicht angezeigt und können durch direktes anklicken in
+Detailansicht betrachtet werden.  Um von der Detailansicht auf die
+Filterseite zurückzukommen, existiert ein Link "`Go back to
+filterview"'.  Um von der Filterseite aus zurück zur Startseite zu
+kommen, existiert ein Link "`Go back to Albumlist"'.
+
+\subsection{EXIF-Daten anzeigen}
+
+Hat man den Schritt "`Fotos eines Albums ansehen"' durchgeführt, kann
+man sich in der Detailansicht durch klicken auf den Link "`Show
+additional metadata"' die EXIF-Daten\cite{exifwp} zum jeweiligen
+Foto anzeigen lassen. Dieser Link existier jedoch nur, wenn das Foto
+EXIF-Daten besitzt.
+
+\subsection{Foto kommentieren}
+
+Hat man den Schritt "`Fotos eines Albums ansehen"' durchgeführt, ist es
+dem Betrachter gewährt ein Kommentar zu einem Foto hinzu zu fügen,
+welcher dann von jedem anderen Betrachter sichtbar ist. Hierfür ist eine
+Eingabemaske vorhanden, in dem man seinen Namen und den Kommentar
+angeben und über den Klick auf den Button "`Add comment"' abschicken
+kann.
+
+\subsection{Album als Diashow anzeigen}
+
+Auf der Seite "`Viewing Album"' existiert ein Link "`View all as
+Diashow"' um die Fotos des Albums als Diashow durchlaufen zu lassen. Die
+Diashow startet beim ersten Foto des Albums und endet mit dem letzten.
+Außerdem wird man mit einer Meldung darauf aufmerksam gemacht, dass die
+Diashow beendet ist. Bei der Diashow existier ein Link "`Go back to
+album"' um während oder nach der Diashow zur Seite "`Viewing Album"'
+zurück zu kehren.
+
+\newpage
+
+\section{Benutzung der Administrationsoberfläche}
+
+\subsection{Administrationsoberfläche aufrufen}
+
+Um auf die Administrationsoberfläche zu gelangen muss in einem Browsers
+die URL des Rechners auf der die Anwendung läuft und der konfigurierte
+Port angegeben werden (https://$<$zieladresse$>$:$<$port$>$/admin/).
+Nachdem man die Adresse eingegeben hat, wird man aufgefordert sich als
+Administrator zu authentifizieren. Nach dieser Benutzer- und Passwort-
+abfrage gelangt man auf die Startseite der Administrationsoberfläche.
+
+\subsection{Neues Album anlegen, bearbeiten oder löschen}
+
+Die Startseite beinhaltet eine Eingabemaske "`Add an Album"' um ein
+neues Album anzulegen und dessen Beschreibung anzugeben. Mit dem Button
+"`ADD"' wird ein leeres Album mit dem angegebenen Namen und der
+Beschreibung erzeugt. Das leere neue Album erscheint sofort in der
+"`Album List"' und kann mit dem dazugehörigen Link "`Delete"' gelöscht
+werden. Wird ein nicht leeres Album gelöscht, werden auch alle Bilder
+des Albums mitgelöscht. Durch eine klick auf den Link "`Edit"' bei dem
+dazugehörigen Album, gelangt man auf die Seite "`Edit Album"'. Hier kann
+unter anderem im Bereich "`Edit Album"' der Albumname und die
+Beschreibung geändert werden. Durch das Anklicken des Buttons "`Save
+Changes"' werden die Änderungen übernommen.
+
+\subsection{Bilder eines Albums hinzufügen, löschen oder bearbeiten}
+
+Um Bilder eines Albums zu bearbeiten, muss der Link "`Edit"' für das
+jeweilige Album geklickt werden. Dadurch gelangt man auf die Seite
+"`Edit Album"'. Hier gibt es eine Eingabemaske "`Add Photo to Album"' in
+der man die Beschreibung für das Foto und mit dem Button "`Durchsuchen"'
+ein Foto auf dem lokalen Dateisystem angeben kann. Mit dem Button "`Add
+Photo"' wird das angegeben Foto auf den Server geladen und sofort
+angezeigt.  In dem Bereich "`Modify Photos"' existieren für jedes Bild
+ein Link "`Delete"'. Mit einem Klick auf "`Delete"' kann ein Foto vom
+Server gelöscht werden.  Um die Beschreibung eines Fotos zu ändern muss
+auf die Miniaturansicht des Fotos geklickt werden. Auf der folgenden
+Seite, muss in das Feld "`Photo Description"' die gewünschte
+Beschreibung eingetragen und die Änderung mit dem Button "`Save
+Changes"' übernommen werden.
+
+\subsection{Tags erzeugen, ändern oder löschen}
+
+Tags können auf der Seite "`Edit Tags"' erzeugt, umbenannt oder gelöscht
+werden.  Um auf diese Seite zu gelangen, muss man auf der Startseite der
+Administrationsoberfläche auf den Link "`Edit Tags"' geklickt werden.
+Auf dieser Seite hat jeder Tag seinen Bereich um bearbeitet werden zu
+können. Am Ende der Tagliste existiert eine Eingabemaske "`Add Tag"' um
+einen neuen Tag zu erzeugen. Hierzu muss in das Textfeld der gewünschte
+Tag-Name eingetragen werden.  Durch einen Klick auf den Button "`Add
+Tag"' wird der Tag erzeugt und kann von diesen Zeitpunkt ab, verwendet
+werden. Ein vorhandener Tag kann umbenannt werden, indem man in dem
+dazugehörigem Textfeld den Namen ändert und mit dem Button "`Save
+Changes"' übernommen werden. Entfernt man den Namen komplett au den
+Textfeld und klickt den Button "`Save Changes"', wird der Tag gelöscht.
+
+\subsection{Tags einem Foto zuordnen oder entfernen}
+
+Es gibt zwei Möglichkeiten um Tags zuzuordnen. Einerseits können die
+Tags auf der Seite "`Edit Album"' hinzugefügt werden. Hierzu muss bei
+jedem Foto, welches zu dem Tag gehören soll, das Feld "`assign to Tag"'
+markiert werden, der gewünschte Tag in der Auswahlbox ausgewählt werden
+und mit dem Button "`Assign to Tag"' bestätigt werden.  Die Möglichkeit
+Tags von Bildern wieder zu entfernen, besteht hier nicht. Dies muss
+einzeln für jedes Foto gemacht werden, was im nächsten Absatz erklärt
+wird.  Die zweite Möglichkeit um Tags zuzuordnen, besteht auf der Seite
+"`Edit Photo"'. Genauer gesagt ist dies eine Kombination aus Hinzufügen
+und Entfernen von Tags .  Im Bereich "`Edit Photo Data"' gibt es zwei
+Boxen. Eine "`Assigned Tags"' und eine "`Not Assigned Tags"'. Mit den
+Pfeilbuttons wählt man aus welche Tags man haben will. Diese müssen dann
+in "`Assigned Tags"' stehen. Die Tags, die in "`Not Assigned Tags"'
+stehen, werden dem Bild nicht zugeordnet oder falls sie dem Bild
+zugeordnet waren, wieder entfernt.  Die Änderungen müssen mit dem Button
+"`Save Changes"' übernommen werden.
+
+\subsection{Kommentare löschen}
+
+Auf der Seite "`Edit Photo"' können Kommentare gelöscht werden in dem
+man bei dem jeweiligen Kommentar auf den Link "`delete"' klickt. Der
+gewünschte Kommentar wird gelöscht und ist sowohl für den Administrator
+sowie für den Betrachter nicht mehr sichtbar.
+
+\subsection{Schlüssel für Album generieren}
+
+Der Administrator kann festlegen ob ein Album für jeden Betrachte
+gesehen werden darf, oder ob er für ein Album einen Schlüssel vergibt.
+Damit kann er festlegen, dass nur derjenige das Album anschauen darf,
+der den dazugehörigen Schlüssel hat. Um eine Schlüssel zu generieren,
+muss man auf der Seite "`Edit Album"' im Bereich "`Manage Album Key"'
+auf den Button "`Generate New Key"' klicken. Von diesem Zeitpunkt an,
+muss der Betrachter zum ansehen des bestimmten Albums, genau diesen
+Schlüssel angeben. Dies kann wieder rückgängig gemacht werden indem man
+bei dem gewünschten Album auf "`Delete Key"' klickt.
+
+\newpage
+\addcontentsline{toc}{section}{Literatur}
+\begin{thebibliography}{}
+	\bibitem{exifwp} Wikipedia Beitrag zu EXIF
+
+		\url{http://de.wikipedia.org/wiki/EXIF}
+\end{thebibliography}
+
+\end{document}
