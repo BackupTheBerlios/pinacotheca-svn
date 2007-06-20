@@ -1,0 +1,44 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html>
+<head>
+<title>Photo Display</title>
+<link rel="stylesheet" type="text/css" href="/album/stylesheet"></link>
+<script type="text/javascript" src="/album/template/pt.js"></script>
+<script type="text/javascript" src="/album/template/simplephoto.js"></script>
+</head>
+<body>
+<h1>Viewing Photo</h1>
+<p><a id="backlink" href="javascript:history.back();">Go back to filter view</a></p>
+<div id="outerphotobox">
+<div id="photobox"><img id="photo" class="photodisplay" alt="" src="" /></div>
+<div id="detailsbox">
+<dl>
+	<dt>Name:</dt>
+	<dd id="photoName"></dd>
+	<dt>Description:</dt>
+	<dd id="photoDescription"></dd>
+	<dt>Date/Time:</dt>
+	<dd id="photoDate"></dd>
+	<dt>Tags:</dt>
+	<dd id="tags"></dd>
+</dl>
+<a href="javascript:toggleAdditionalMetadata();" id="metadatalink">Show additional metadata</a>
+<dl id="metadata">
+</dl>
+</div>
+</div>
+<h2>Comments</h2>
+<div id="commentbox"></div>
+<form method="post" action="javascript:addComment();" id="commentform">
+<fieldset><legend>Add a new comment</legend>
+<p><label for="commentname">Name:</label><br />
+<input type="text" name="commentname" id="commentname" /></p>
+<p><label for="commenttext">Comment:</label><br />
+<textarea id="commenttext" id="commenttext" rows="10" cols="40"></textarea></p>
+<p>
+<button type="submit">Add Comment</button>
+</p>
+</fieldset>
+</form>
+</body>
+</html>

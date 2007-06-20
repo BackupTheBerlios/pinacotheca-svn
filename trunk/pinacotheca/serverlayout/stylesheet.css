@@ -1,0 +1,185 @@
+body {
+	font-family: Arial, sans-serif;
+	font-size: 12px;
+}
+
+h1, h2, h3, h4, h5, h6, h7 {
+	font-family: "Trebuchet MS", sans-serif;
+}
+
+#unapplied {
+	width: 150px;
+}
+
+#applied {
+	width: 150px;
+}
+
+button.filterbutton {
+	width: 100px;
+}
+
+#commentform {
+	clear: both;
+}
+
+#commentbox {
+	width: 822px;
+	clear: both;
+}
+
+div.comment {
+	background-color: #efefef;
+	padding: 10px;
+	margin-top: 10px;
+	margin-bottom: 10px;
+	border: 1px solid #999;
+}
+
+#navigationbox {
+	margin-top: 20px;
+	width: 822px;
+	text-align: center;
+}
+
+#navigationbox a {
+	border: 0 none;
+}
+
+#navigationbox a {
+	border: 0 none;
+}
+
+#navigationbox img {
+	border: 2px solid #b0d303;
+}
+
+#prevbox {
+	padding: 10px;
+	float: left;
+	display: none;
+}
+
+#nextbox {
+	padding: 10px;
+	float: right;
+	display: none;
+}
+
+#detailsbox {
+	position: absolute;
+	right: 10px;
+	width: 180px;
+	height: 450px;
+	overflow: auto;
+}
+
+#photobox {
+	position: absolute;
+	left: 10px;
+}
+
+#outerphotobox {
+	padding: 10px;
+	background-color: #eee;
+	color: #000;
+	border: 1px solid #aaa;
+	position: relative;
+	height: 450px;
+	width: 800px;
+}
+
+#metadata {
+	display: none;
+}
+
+#metadatalink {
+	visibility: hidden;
+}
+
+#photobox img {
+	border: 1px solid #666;
+}
+
+#tagfilter {
+	position: absolute;
+	left: 10px;
+	width: 150px;
+}
+
+#tagfilter input, #tagfilter button {
+	width: 150px;
+}
+
+#tagphotolist {
+	padding: 10px;
+	position: absolute;
+	left: 180px;
+}
+
+div.photolist {
+	width: 800px;
+}
+
+dt {
+	font-weight: bold;
+}
+
+img.photodisplay {
+	border: 1px solid #000;
+}
+
+div.photothumbnail {
+	float: left;
+	padding: 10px;
+	margin: 5px;
+	border: 1px solid #999;
+	background-color: #eee;
+}
+
+a {
+	color: #b0d303;
+	background-color: transparent;
+	font-weight: bold;
+}
+
+div.photothumbnail a {
+	border: 0 none;
+}
+
+div.photothumbnail img {
+	border: 2px solid #b0d303;
+}
+
+div.photothumbnail img:hover {
+	border: 2px solid #666;
+}
+
+a:hover {
+	color: #666;
+	background-color: transparent;
+}
+
+legend {
+	font-weight: bold;
+}
+
+div.album {
+	background-color: #efefef;
+	padding: 10px;
+	margin-top: 10px;
+	margin-bottom: 10px;
+	width: 800px;
+	border: 1px solid #999;
+}
+
+fieldset {
+	margin-top: 10px;
+	margin-bottom: 10px;
+	padding: 10px;
+	width: 800px;
+}
+
+p.fullwidth {
+	width: 800px;
+}

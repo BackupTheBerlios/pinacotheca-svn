@@ -1,0 +1,5 @@
+pt.port=9090
+pt.sslPort=9091
+pt.serverRoot=
+pt.adminUser=
+pt.adminPass=
