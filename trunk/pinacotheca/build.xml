@@ -1,0 +1,84 @@
+<?xml version="1.0"?>
+<project name="pinacotheca" basedir=".">
+	<property name="src" value="${basedir}/src"/>
+	<property name="build" value="${basedir}/build"/>
+	<property name="lib" value="${basedir}/lib"/>
+	<property name="dist" value="${basedir}/dist"/>
+	<property name="ptbin" value="${dist}/pinacotheca"/>
+	<property name="ptsrc" value="${dist}/pinacothecasrc"/>
+	<property name="resources" value="${basedir}/resources"/>
+	<property name="serverlayout" value="${basedir}/serverlayout"/>
+	<property name="classpath" value="lib/derby.jar lib/jiu.jar lib/metadata-extractor-2.3.1.jar"/>
+	
+	<target name="initbuild">
+		<mkdir dir="${build}"/>
+	</target>
+	
+	<target name="initdist">
+		<mkdir dir="${dist}"/>
+		<mkdir dir="${ptbin}"/>
+		<mkdir dir="${ptbin}/lib"/>
+		<copy todir="${ptbin}/lib">
+			<fileset dir="${lib}"/>
+		</copy>
+		<copy todir="${ptbin}/" file="${resources}/startserver.sh"/>
+		<copy todir="${ptbin}/" file="${resources}/startserver.cmd"/>
+		<copy todir="${ptbin}/" file="${resources}/pinacotheca.properties.example"/>
+		<mkdir dir="${ptsrc}"/>
+		<mkdir dir="${ptsrc}/src"/>
+		<copy todir="${ptsrc}/src">
+			<fileset dir="${basedir}/src">
+				<include name="**/*.java"/>
+			</fileset>
+		</copy>
+		<mkdir dir="${ptsrc}/lib"/>
+		<copy todir="${ptsrc}/lib">
+			<fileset dir="${basedir}/lib"/>
+		</copy>
+		<mkdir dir="${ptsrc}/resources"/>
+		<copy todir="${ptsrc}/resources">
+			<fileset dir="${basedir}/resources"/>
+		</copy>
+		<mkdir dir="${ptsrc}/serverlayout"/>
+		<copy todir="${ptsrc}/serverlayout">
+			<fileset dir="${basedir}/serverlayout"/>
+		</copy>
+		<copy todir="${ptsrc}">
+			<fileset dir="${basedir}">
+				<include name="build.xml" />
+			</fileset>
+		</copy>
+	</target>
+	
+	<target name="buildserver" depends="initbuild">
+		<javac srcdir="${src}" destdir="${build}" classpath="${lib}/jiu.jar:${lib}/metadata-extractor-2.3.1.jar:${lib}/derby.jar" debug="on"/>
+	</target>
+	
+	<target name="createbinpackage" depends="buildserver,initdist">
+		<jar jarfile="${ptbin}/pinacotheca.jar" basedir="${build}">
+			<manifest>
+				<attribute name="Main-Class" value="de.berlios.pinacotheca.PTMain"/>
+				<attribute name="Class-Path" value="${classpath}"/>
+			</manifest>
+		</jar>
+		<zip destfile="${ptbin}/serverlayout.zip">
+			<fileset dir="${serverlayout}"/>
+		</zip>
+		<zip destfile="${dist}/pinacotheca.zip">
+			<zipfileset prefix="pinacotheca" dir="${ptbin}"/>
+		</zip>
+	</target>
+	
+	<target name="createsourcepackage" depends="initdist">
+		<zip destfile="${dist}/pinacothecasrc.zip">
+			<zipfileset prefix="pinacothecasrc" dir="${ptsrc}"/>
+		</zip>
+	</target>
+	
+	<target name="dist" depends="createbinpackage,createsourcepackage"></target>
+	
+	<target name="clean">
+		<delete dir="${build}"/>
+		<delete dir="${dist}"/>
+	</target>
+</project>
